@@ -1,0 +1,2 @@
+colorama==0.4.6
+peewee==3.17.7
