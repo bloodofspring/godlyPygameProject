@@ -5,11 +5,10 @@ from utility import load_image
 def main():
     pygame.init()
     pygame.display.set_caption("Pokemon PvE game")
-    image = load_image('icon.png', colorkey=-1)
-    pygame.display.set_icon(image)
     size = width, height = 1000, 700
-
     screen = pygame.display.set_mode(size)
+    image = load_image('icon.png')
+    pygame.display.set_icon(image)
 
     running = True
     FPS = 60
