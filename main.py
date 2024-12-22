@@ -2,6 +2,7 @@ import pygame
 import sys
 from utility import load_image
 from TitleScreen import TitleScreen
+from TeamChoosingScreen import TeamChoosingScreen
 
 
 def main():
@@ -25,7 +26,7 @@ def main():
                     running = False
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        ...   # тут переход с заставки на выбор покемонов
+                        current_screen = TeamChoosingScreen(screen)
         ...
 
         clock.tick(fps)
