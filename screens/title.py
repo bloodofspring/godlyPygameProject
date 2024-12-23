@@ -25,7 +25,7 @@ class TitleScreen(AbstractScreen):
                         self.runner.current_screen = ContinueScreen(screen=self.screen, runner=self.runner)
                         #  current_screen = TeamChoosingScreen(screen)
 
-    def update(self, events) -> None:
+    def update(self, events, **kwargs) -> None:
         self.handle_events(events)
 
         self.screen.fill((255, 255, 255))

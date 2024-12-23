@@ -7,5 +7,5 @@ class AbstractScreen(ABC):
         self.runner = runner
 
     @abstractmethod
-    def update(self, events):
+    def update(self, events, **kwargs):
         raise NotImplemented

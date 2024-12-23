@@ -24,6 +24,7 @@ class GameRunner:
         self.current_screen = TitleScreen(screen=self.game_window, runner=self)
 
         self.is_running: bool = True
+        self.frame: int = 0
         self.clock = pygame.time.Clock()
 
     def handle_events(self, events):
@@ -34,10 +35,12 @@ class GameRunner:
 
     def start(self):
         while self.is_running:
+            self.frame = (self.frame + 1) % game_fps
+
             events = pygame.event.get()
             self.handle_events(events=events)
 
-            self.current_screen.update(events=events)
+            self.current_screen.update(events, frame=self.frame)
 
             self.clock.tick(game_fps)
             pygame.display.flip()
