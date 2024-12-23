@@ -1,9 +1,12 @@
 import pygame
 
+from screens.abstractScreen import AbstractScreen
 
-class ContinueScreen:
-    def __init__(self, screen):
-        self.screen = screen
+
+class ContinueScreen(AbstractScreen):
+    def __init__(self, screen, runner):
+        super().__init__(screen=screen, runner=runner)
+
         self.text_font = pygame.font.Font(None, 150)
         self.continue_text = self.text_font.render("Continue?", True, (0, 0, 0))
         self.counter = 999

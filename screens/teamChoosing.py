@@ -1,10 +1,12 @@
-from util import load_image
 import pygame
 
+from screens.abstractScreen import AbstractScreen
 
-class TeamChoosingScreen:
-    def __init__(self, screen):
-        self.screen = screen
+
+class TeamChoosingScreen(AbstractScreen):
+    def __init__(self, screen, runner):
+        super().__init__(screen=screen, runner=runner)
+
         font = pygame.font.Font(None, 50)
         self.choose_text = font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
 
