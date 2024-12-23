@@ -1,4 +1,4 @@
-from utility import load_image
+from util import load_image
 import pygame
 
 
