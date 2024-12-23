@@ -32,17 +32,12 @@ class GameRunner:
                 case pygame.QUIT:
                     self.is_running = False
 
-                case pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        self.current_screen = ContinueScreen(screen=self.game_window, runner=self)
-                        #  current_screen = TeamChoosingScreen(screen)
-
     def start(self):
         while self.is_running:
             events = pygame.event.get()
             self.handle_events(events=events)
 
-            self.current_screen.update()
+            self.current_screen.update(events=events)
 
             self.clock.tick(game_fps)
             pygame.display.flip()

@@ -1,5 +1,6 @@
 import pygame
 
+from screens.suggestContinue import ContinueScreen
 from screens.abstractScreen import AbstractScreen
 from util import load_image
 
@@ -16,7 +17,17 @@ class TitleScreen(AbstractScreen):
         self.welcome_text = self.welcome_text_font.render("Press Enter to start", True,
                                                           [self.welcome_text_color for _ in range(3)])
 
-    def update(self) -> None:
+    def handle_events(self, events):
+        for event in events:
+            match event.type:
+                case pygame.KEYUP:
+                    if event.key == pygame.K_RETURN:
+                        self.runner.current_screen = ContinueScreen(screen=self.screen, runner=self.runner)
+                        #  current_screen = TeamChoosingScreen(screen)
+
+    def update(self, events) -> None:
+        self.handle_events(events)
+
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.logo, (90, -100))
 

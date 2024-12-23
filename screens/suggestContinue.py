@@ -12,7 +12,7 @@ class ContinueScreen(AbstractScreen):
         self.counter = 999
         self.counter_text = self.text_font.render(str(self.counter // 100), True, (0, 0, 0))
 
-    def update(self) -> None:
+    def update(self, events) -> None:
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.continue_text, (250, 100))
         self.counter -= 1
