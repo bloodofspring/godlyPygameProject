@@ -8,6 +8,6 @@ class TeamChoosingScreen:
         font = pygame.font.Font(None, 50)
         self.choose_text = font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
 
-    def run(self) -> None:
+    def update(self) -> None:
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.choose_text, (280, 0))
