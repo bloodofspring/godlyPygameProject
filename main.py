@@ -1,37 +1,45 @@
 import pygame
 import sys
-from utility import load_image
-from TitleScreen import TitleScreen
-from TeamChoosingScreen import TeamChoosingScreen
-from SuggestContinueScreen import ContinueScreen
+
+from constants import window_width, window_height, game_fps
+
+from util import load_image
+from screens.titleScreen import TitleScreen
+from screens.suggestContinueScreen import ContinueScreen
+
+
+def setup_window():
+    pygame.init()
+    screen = pygame.display.set_mode((window_width, window_height))
+
+    pygame.display.set_caption("Pokemon PvE game")
+    pygame.display.set_icon(load_image('icon.png'))
+
+    return screen
 
 
 def main():
-    pygame.init()
-    pygame.display.set_caption("Pokemon PvE game")
-    size = 1000, 700
-    screen = pygame.display.set_mode(size)
-    icon = load_image('icon.png')
-    pygame.display.set_icon(icon)
+    screen = setup_window()
 
     current_screen = TitleScreen(screen)
 
-    running = True
-    fps = 60
+    is_running = True
     clock = pygame.time.Clock()
-    while running:
-        current_screen.run()
+
+    while is_running:
+
+        current_screen.update()
+
         for event in pygame.event.get():
             match event.type:
                 case pygame.QUIT:
-                    running = False
+                    is_running = False
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
                         current_screen = ContinueScreen(screen)
                         #  current_screen = TeamChoosingScreen(screen)
-        ...
 
-        clock.tick(fps)
+        clock.tick(game_fps)
         pygame.display.flip()
     pygame.quit()
 
