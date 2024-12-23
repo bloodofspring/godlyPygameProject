@@ -4,8 +4,8 @@ import sys
 from constants import window_width, window_height, game_fps
 
 from util import load_image
-from screens.titleScreen import TitleScreen
-from screens.suggestContinueScreen import ContinueScreen
+from screens.title import TitleScreen
+from screens.suggestContinue import ContinueScreen
 
 
 def setup_window():
