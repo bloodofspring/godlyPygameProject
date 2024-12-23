@@ -40,7 +40,7 @@ class GameRunner:
             events = pygame.event.get()
             self.handle_events(events=events)
 
-            self.current_screen.update(events, frame=self.frame)
+            self.current_screen.update(events)
 
             self.clock.tick(game_fps)
             pygame.display.flip()
