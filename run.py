@@ -21,7 +21,7 @@ def setup_window():
 class GameRunner:
     def __init__(self, game_window):
         self.game_window = game_window
-        self.current_screen = TitleScreen(screen=self.game_window)
+        self.current_screen = TitleScreen(screen=self.game_window, runner=self)
 
         self.is_running: bool = True
         self.clock = pygame.time.Clock()
@@ -34,7 +34,7 @@ class GameRunner:
 
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        self.current_screen = ContinueScreen(screen=self.game_window)
+                        self.current_screen = ContinueScreen(screen=self.game_window, runner=self)
                         #  current_screen = TeamChoosingScreen(screen)
 
     def start(self):
