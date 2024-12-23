@@ -12,7 +12,6 @@ class ContinueScreen(AbstractScreen):
 
         self.frequency = 60
         self.counter_value = 10
-        self.counter_text = self.text_font.render(str(self.counter_value), True, (0, 0, 0))
 
     def update_counter(self):
         if self.counter_value == 0:
@@ -21,8 +20,8 @@ class ContinueScreen(AbstractScreen):
         if self.runner.frame % self.frequency == 0:
             self.counter_value -= 1
 
-        self.counter_text = self.text_font.render(str(self.counter_value), True, (0, 0, 0))
-        self.screen.blit(self.counter_text, (450, 250))
+        counter_text = self.text_font.render(str(self.counter_value), True, (0, 0, 0))
+        self.screen.blit(counter_text, (450, 250))
 
     def update(self, events, **kwargs) -> None:
         self.screen.fill((255, 255, 255))
