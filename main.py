@@ -3,12 +3,13 @@ import sys
 from utility import load_image
 from TitleScreen import TitleScreen
 from TeamChoosingScreen import TeamChoosingScreen
+from SuggestContinueScreen import ContinueScreen
 
 
 def main():
     pygame.init()
     pygame.display.set_caption("Pokemon PvE game")
-    size = width, height = 1000, 700
+    size = 1000, 700
     screen = pygame.display.set_mode(size)
     icon = load_image('icon.png')
     pygame.display.set_icon(icon)
@@ -26,7 +27,8 @@ def main():
                     running = False
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        current_screen = TeamChoosingScreen(screen)
+                        current_screen = ContinueScreen(screen)
+                        #  current_screen = TeamChoosingScreen(screen)
         ...
 
         clock.tick(fps)
