@@ -1,4 +1,4 @@
-class AbstractPokemon:
+class Pokemon:
     def __init__(self):
         self.name = "Meow-meow"
         self.attack = 1

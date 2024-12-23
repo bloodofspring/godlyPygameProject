@@ -3,7 +3,6 @@ import sys
 import pygame
 
 from constants import window_width, window_height, game_fps
-from screens.suggestContinue import ContinueScreen
 from screens.title import TitleScreen
 from util import load_image
 
