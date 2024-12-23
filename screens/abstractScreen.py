@@ -1,11 +1,10 @@
-import pygame
-
 from abc import ABC, abstractmethod
 
 
-class AbsScreen(ABC):
-    def __init__(self, screen):
+class AbstractScreen(ABC):
+    def __init__(self, screen, runner):
         self.screen = screen
+        self.runner = runner
 
     @abstractmethod
     def update(self):
