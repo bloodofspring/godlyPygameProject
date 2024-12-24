@@ -12,7 +12,7 @@ def setup_window():
     window = pygame.display.set_mode((window_width, window_height))
 
     pygame.display.set_caption("Pokemon PvE game")
-    pygame.display.set_icon(load_image("icon.png"))
+    pygame.display.set_icon(load_image("app_icon.png"))
 
     return window
 

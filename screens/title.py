@@ -1,7 +1,7 @@
 import pygame
 
-from screens.suggestContinue import ContinueScreen
 from screens.abstractScreen import AbstractScreen
+from screens.teamChoosing import TeamChoosingScreen
 from util import load_image
 
 
@@ -17,15 +17,14 @@ class TitleScreen(AbstractScreen):
         self.flicker_frequency = 1
         self.delta: int = 5
 
-    def handle_events(self, events):
+    def handle_events(self, events) -> None:
         for event in events:
             match event.type:
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        self.runner.current_screen = ContinueScreen(screen=self.screen, runner=self.runner)
-                        #  current_screen = TeamChoosingScreen(screen)
+                        self.runner.current_screen = TeamChoosingScreen(screen=self.screen, runner=self.runner)
 
-    def update_welcome_text(self):
+    def update_welcome_text(self) -> None:
         if self.runner.frame % self.flicker_frequency:
             rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_color)
             self.screen.blit(rendered_text, (350, 500))

@@ -1,0 +1,14 @@
+import pygame
+from screens.abstractScreen import AbstractScreen
+
+
+class CreditsScreen(AbstractScreen):
+    def __init__(self, screen, runner):
+        super().__init__(screen=screen, runner=runner)
+
+        font = pygame.font.Font(None, 80)
+        self.choose_text = font.render("Thank you for playing!", True, (0, 0, 0))
+
+    def update(self, events, **kwargs) -> None:
+        self.screen.fill((255, 255, 255))
+        self.screen.blit(self.choose_text, (200, 100))
