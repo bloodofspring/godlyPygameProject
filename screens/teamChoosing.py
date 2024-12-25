@@ -12,17 +12,17 @@ class TeamChoosingScreen(AbstractScreen):
         self.tip_text = title_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
         self.test_list_of_pokemon = [[str(i), False] for i in range(20)]
         self.cursor_pos = 0
-        self.amount_of_chosen_pokemon = 0
 
     def handle_events(self, events) -> None:
         for event in events:
             match event.type:
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        if self.amount_of_chosen_pokemon == 6:
+                        if len(self.test_list_of_pokemon) == 6:
                             ...  # переход на следующий экран
                     if event.key == pygame.K_SPACE:
-                        self.test_list_of_pokemon[self.cursor_pos][1] = not self.test_list_of_pokemon[self.cursor_pos][1]
+                        if not sum(map(lambda x: x[1], self.test_list_of_pokemon)) == 6 or self.test_list_of_pokemon[self.cursor_pos][1]:
+                            self.test_list_of_pokemon[self.cursor_pos][1] = not self.test_list_of_pokemon[self.cursor_pos][1]
                     if event.key in (pygame.K_w, pygame.K_UP):
                         self.cursor_pos = (self.cursor_pos - 1) % len(self.test_list_of_pokemon)
                     if event.key in (pygame.K_s, pygame.K_DOWN):
