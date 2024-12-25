@@ -1,6 +1,7 @@
 import pygame
 
 from screens.abstractScreen import AbstractScreen
+from entities import Pokemon
 
 
 class TeamChoosingScreen(AbstractScreen):
@@ -10,7 +11,7 @@ class TeamChoosingScreen(AbstractScreen):
         self.pokemon_font = pygame.font.Font(None, 50)
         self.choose_text = title_font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
         self.tip_text = title_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
-        self.test_list_of_pokemon = [[str(i), False] for i in range(20)]
+        self.test_list_of_pokemon = [[Pokemon(1), False] for _ in range(20)]
         self.cursor_pos = 0
 
     def handle_events(self, events) -> None:
@@ -31,16 +32,20 @@ class TeamChoosingScreen(AbstractScreen):
     def display_pokemon(self):
         for i in range(7):
             if i == 3:
-                pygame.draw.rect(self.screen, pygame.Color('yellow'), (200, 120 + i * 80, 600, 70), 3)
+                pygame.draw.rect(self.screen, pygame.Color('yellow'), (200, 100 + i * 85, 600, 80), 3)
             else:
-                rect_color = (pygame.Color('red'), pygame.Color('green'))[self.test_list_of_pokemon[(self.cursor_pos + i - 3) % len(self.test_list_of_pokemon)][1]]
-                pygame.draw.rect(self.screen, rect_color, (200, 120 + i * 80, 600, 70), 3)
-            pokemon_text = self.pokemon_font.render(self.test_list_of_pokemon[(self.cursor_pos + i - 3) % len(self.test_list_of_pokemon)][0], True, (0, 0, 0))
-            self.screen.blit(pokemon_text, (350, 140 + i * 80))
+                rect_color = (pygame.Color('grey'), pygame.Color('green'))[self.test_list_of_pokemon[(self.cursor_pos + i - 3) % len(self.test_list_of_pokemon)][1]]
+                pygame.draw.rect(self.screen, rect_color, (200, 100 + i * 85, 600, 80), 3)
+
+            pokemon_text = self.pokemon_font.render(self.test_list_of_pokemon[(self.cursor_pos + i - 3) % len(self.test_list_of_pokemon)][0].name, True, (0, 0, 0))
+            pokemon_icon = self.test_list_of_pokemon[(self.cursor_pos + i - 3) % len(self.test_list_of_pokemon)][0].icon
+            pokemon_icon = pygame.transform.scale(pokemon_icon, (pokemon_icon.get_width(), pokemon_icon.get_height()))
+            self.screen.blit(pokemon_text, (350, 125 + i * 85))
+            self.screen.blit(pokemon_icon, (200, 90 + i * 85))
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.choose_text, (260, 0))
-        self.screen.blit(self.tip_text, (100, 60))
+        self.screen.blit(self.tip_text, (100, 50))
         self.display_pokemon()
