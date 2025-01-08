@@ -39,7 +39,6 @@ class TeamChoosingScreen(AbstractScreen):
 
             pokemon_text = self.pokemon_font.render(self.test_list_of_pokemon[(self.cursor_pos + i - 3) % len(self.test_list_of_pokemon)][0].name, True, (0, 0, 0))
             pokemon_icon = self.test_list_of_pokemon[(self.cursor_pos + i - 3) % len(self.test_list_of_pokemon)][0].icon
-            pokemon_icon = pygame.transform.scale(pokemon_icon, (pokemon_icon.get_width(), pokemon_icon.get_height()))
             self.screen.blit(pokemon_text, (350, 125 + i * 85))
             self.screen.blit(pokemon_icon, (200, 90 + i * 85))
 
