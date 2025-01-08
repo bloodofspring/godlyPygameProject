@@ -1,4 +1,6 @@
 import pygame
+import random
+import math
 
 from screens.abstractScreen import AbstractScreen
 from screens.teamChoosing import TeamChoosingScreen
@@ -17,6 +19,11 @@ class TitleScreen(AbstractScreen):
         self.flicker_frequency = 1
         self.delta: int = 5
 
+        self.jumping: bool = False
+        self.jump_counter = 0
+        self.jump_x, self.jump_y = 1100, 600
+        self.list_of_bouncing_pokemon = ('Blaziken', 'Charizard', 'Gengar', 'Groudon', 'Lapras', 'Lucario', 'Mew', 'Pikachu', 'Sceptile')
+
     def handle_events(self, events) -> None:
         for event in events:
             match event.type:
@@ -27,7 +34,7 @@ class TitleScreen(AbstractScreen):
     def update_welcome_text(self) -> None:
         if self.runner.frame % self.flicker_frequency:
             rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_color)
-            self.screen.blit(rendered_text, (350, 500))
+            self.screen.blit(rendered_text, (350, 450))
 
             return
 
@@ -40,12 +47,32 @@ class TitleScreen(AbstractScreen):
         self.welcome_text_color = tuple(map(lambda x: (x + self.delta) % 256, self.welcome_text_color))
 
         rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_color)
-        self.screen.blit(rendered_text, (350, 500))
+        self.screen.blit(rendered_text, (350, 450))
+
+    def random_pokemon_jumping(self):
+        if (not self.jumping) and random.random() > 0.995:
+            self.jumping = True
+            pokemon = random.choice(self.list_of_bouncing_pokemon)
+            self.pokemon_icon = load_image(f'{pokemon}/icon.png')
+            self.screen.blit(self.pokemon_icon, (self.jump_x, self.jump_y))
+        elif self.jumping:
+            if self.runner.frame == 0:
+                self.jump_counter += 1
+            angle = self.runner.frame / 30 * math.pi
+            self.jump_x -= 2
+            self.jump_y = 600 - int(50 * abs(math.sin(angle)))
+            self.screen.blit(self.pokemon_icon, (self.jump_x, self.jump_y))
+            if self.jump_x < -100:
+                self.jumping = False
+                self.jump_counter = 0
+                self.jump_x, self.jump_y = 1100, 600
+
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
 
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.logo, (90, -100))
+        self.random_pokemon_jumping()
 
         self.update_welcome_text()
