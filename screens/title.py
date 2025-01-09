@@ -15,6 +15,9 @@ class TitleScreen(AbstractScreen):
         self.logo = pygame.transform.scale(logo, (logo.get_width() // 2, logo.get_height() // 2))
         self.welcome_text_font = pygame.font.Font(None, 50)
 
+        background = load_image('forest_background.png')
+        self.background = pygame.transform.scale(background, (logo.get_width() // 3 * 2, logo.get_height() // 3 * 2))
+
         self.welcome_text_color: tuple[int, int, int] = (0, 0, 0)
         self.flicker_frequency = 1
         self.delta: int = 5
@@ -50,7 +53,7 @@ class TitleScreen(AbstractScreen):
         self.screen.blit(rendered_text, (350, 450))
 
     def random_pokemon_jumping(self):
-        if (not self.jumping) and random.random() > 0.995:
+        if (not self.jumping) and random.random() > 0.99:
             self.jumping = True
             pokemon = random.choice(self.list_of_bouncing_pokemon)
             self.pokemon_icon = load_image(f'{pokemon}/icon.png')
@@ -72,6 +75,7 @@ class TitleScreen(AbstractScreen):
         self.handle_events(events)
 
         self.screen.fill((255, 255, 255))
+        self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.logo, (90, -100))
         self.random_pokemon_jumping()
 
