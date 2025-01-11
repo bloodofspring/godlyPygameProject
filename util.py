@@ -1,5 +1,13 @@
 import pygame
 import os
+import random
+
+
+tuple_of_bouncing_pokemon = (
+        'Articuno', 'Blaziken', 'Charizard', 'Dragonite', 'Gardevoir', 'Gengar', 'Groudon',
+        'Gyarados', 'Kyogre', 'Lapras', 'Lucario', 'Lugia', 'Machamp', 'Mew', 'Mewtwo',
+        'Moltres', 'Pikachu', 'Rayquaza', 'Sceptile', 'Swampert', 'Zapdos')
+all_sprites = pygame.sprite.Group()
 
 
 def load_image(name, colorkey=None, path="static/images"):
@@ -21,3 +29,33 @@ def load_image(name, colorkey=None, path="static/images"):
         image.set_colorkey(colorkey)
 
     return image
+
+
+class Horizontal_Border(pygame.sprite.Sprite):
+    def __init__(self, x1, y1, x2):
+        super().__init__(all_sprites)
+        self.image = pygame.Surface([x2 - x1, 1])
+        self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
+
+
+class PokeSprite(pygame.sprite.Sprite):
+    def __init__(self, pos, bouncy_surface):
+        super().__init__(all_sprites)
+        self.bouncy_surface = bouncy_surface
+        pokemon = random.choice(tuple_of_bouncing_pokemon)
+        self.image = load_image(f'{pokemon}/icon.png')
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.x = pos[0]
+        self.rect.y = pos[1] - self.image.get_height()
+        self.velocity_y = -12
+        self.velocity_x = 2
+
+    def update(self):
+        if not pygame.sprite.collide_mask(self, self.bouncy_surface):
+            self.rect = self.rect.move(-self.velocity_x, self.velocity_y)
+            self.velocity_y += 1
+        else:
+            self.velocity_y = -12
+            self.rect = self.rect.move(-self.velocity_x, self.velocity_y)
+            self.velocity_y += 1

@@ -1,10 +1,9 @@
 import pygame
 import random
-import math
 
 from screens.abstractScreen import AbstractScreen
 from screens.teamChoosing import TeamChoosingScreen
-from util import load_image
+from util import load_image, PokeSprite, Horizontal_Border, all_sprites
 
 
 class TitleScreen(AbstractScreen):
@@ -24,11 +23,7 @@ class TitleScreen(AbstractScreen):
 
         self.jumping: bool = False
         self.jump_counter = 0
-        self.jump_x, self.jump_y = 1100, 600
-        self.tuple_of_bouncing_pokemon = (
-        'Articuno', 'Blaziken', 'Charizard', 'Dragonite', 'Gardevoir', 'Gengar', 'Groudon',
-        'Gyarados', 'Kyogre', 'Lapras', 'Lucario', 'Lugia', 'Machamp', 'Mew', 'Mewtwo',
-        'Moltres', 'Pikachu', 'Rayquaza', 'Sceptile' 'Swampert', 'Zapdos')
+        self.horizontal_border = Horizontal_Border(-200, 700, 1500)
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -56,22 +51,13 @@ class TitleScreen(AbstractScreen):
         self.screen.blit(rendered_text, (350, 450))
 
     def random_pokemon_jumping(self):
-        if (not self.jumping) and random.random() > 0.99:
+        if (not self.jumping) and random.random() > 0.9:
             self.jumping = True
-            pokemon = random.choice(self.tuple_of_bouncing_pokemon)
-            self.pokemon_icon = load_image(f'{pokemon}/icon.png')
-            self.screen.blit(self.pokemon_icon, (self.jump_x, self.jump_y))
+            self.pokemon = PokeSprite((1100, 700), self.horizontal_border)
         elif self.jumping:
-            if self.runner.frame == 0:
-                self.jump_counter += 1
-            angle = self.runner.frame / 30 * math.pi
-            self.jump_x -= 2
-            self.jump_y = 600 - int(50 * abs(math.sin(angle)))
-            self.screen.blit(self.pokemon_icon, (self.jump_x, self.jump_y))
-            if self.jump_x < -100:
+            if self.pokemon.rect.x < -100:
                 self.jumping = False
-                self.jump_counter = 0
-                self.jump_x, self.jump_y = 1100, 600
+                all_sprites.remove(self.pokemon)
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
@@ -80,5 +66,7 @@ class TitleScreen(AbstractScreen):
         self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.logo, (90, -100))
         self.random_pokemon_jumping()
+        all_sprites.draw(self.screen)
+        all_sprites.update()
 
         self.update_welcome_text()
