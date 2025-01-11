@@ -49,7 +49,7 @@ class PokeSprite(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1] - self.image.get_height()
         self.velocity_y = -12
-        self.velocity_x = 2
+        self.velocity_x = 3
 
     def update(self):
         if not pygame.sprite.collide_mask(self, self.bouncy_surface):
