@@ -25,7 +25,10 @@ class TitleScreen(AbstractScreen):
         self.jumping: bool = False
         self.jump_counter = 0
         self.jump_x, self.jump_y = 1100, 600
-        self.list_of_bouncing_pokemon = ('Blaziken', 'Charizard', 'Gengar', 'Groudon', 'Lapras', 'Lucario', 'Mew', 'Pikachu', 'Sceptile')
+        self.tuple_of_bouncing_pokemon = (
+        'Articuno', 'Blaziken', 'Charizard', 'Dragonite', 'Gardevoir', 'Gengar', 'Groudon',
+        'Gyarados', 'Kyogre', 'Lapras', 'Lucario', 'Lugia', 'Machamp', 'Mew', 'Mewtwo',
+        'Moltres', 'Pikachu', 'Rayquaza', 'Sceptile' 'Swampert', 'Zapdos')
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -55,7 +58,7 @@ class TitleScreen(AbstractScreen):
     def random_pokemon_jumping(self):
         if (not self.jumping) and random.random() > 0.99:
             self.jumping = True
-            pokemon = random.choice(self.list_of_bouncing_pokemon)
+            pokemon = random.choice(self.tuple_of_bouncing_pokemon)
             self.pokemon_icon = load_image(f'{pokemon}/icon.png')
             self.screen.blit(self.pokemon_icon, (self.jump_x, self.jump_y))
         elif self.jumping:
@@ -69,7 +72,6 @@ class TitleScreen(AbstractScreen):
                 self.jumping = False
                 self.jump_counter = 0
                 self.jump_x, self.jump_y = 1100, 600
-
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
