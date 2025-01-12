@@ -25,12 +25,17 @@ class TitleScreen(AbstractScreen):
         self.jump_counter = 0
         self.horizontal_border = Horizontal_Border(-200, 700, 1500)
 
+        pygame.mixer.music.load('static/music/title_music.mp3')
+        pygame.mixer.music.play()
+
     def handle_events(self, events) -> None:
         for event in events:
             match event.type:
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
                         self.runner.current_screen = TeamChoosingScreen(screen=self.screen, runner=self.runner)
+                        pygame.mixer.music.pause()
+                        pygame.mixer.music.unload()
 
     def update_welcome_text(self) -> None:
         if self.runner.frame % self.flicker_frequency:

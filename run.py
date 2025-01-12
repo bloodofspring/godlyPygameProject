@@ -9,6 +9,7 @@ from util import load_image
 
 def setup_window():
     pygame.init()
+    pygame.mixer.init()
     window = pygame.display.set_mode((window_width, window_height))
 
     pygame.display.set_caption("Pokemon PvE game")
