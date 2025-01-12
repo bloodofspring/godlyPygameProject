@@ -9,6 +9,9 @@ class CreditsScreen(AbstractScreen):
         font = pygame.font.Font(None, 80)
         self.choose_text = font.render("Thank you for playing!", True, (0, 0, 0))
 
+        pygame.mixer.music.load('static/music/credits_music.mp3')
+        pygame.mixer.music.play()
+
     def update(self, events, **kwargs) -> None:
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.choose_text, (200, 100))
