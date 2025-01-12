@@ -51,7 +51,7 @@ class TitleScreen(AbstractScreen):
         self.screen.blit(rendered_text, (350, 450))
 
     def random_pokemon_jumping(self):
-        if (not self.jumping) and random.random() > 0.9:
+        if (not self.jumping) and random.random() > 0.99:
             self.jumping = True
             self.pokemon = PokeSprite((1100, 700), self.horizontal_border)
         elif self.jumping:
