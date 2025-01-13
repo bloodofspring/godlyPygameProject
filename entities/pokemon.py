@@ -1,5 +1,5 @@
 from util import load_image
-from pokemon_stats import pokemon_stats
+from combat_stats import pokemon_stats
 
 
 class Pokemon:
