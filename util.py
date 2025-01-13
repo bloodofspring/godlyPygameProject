@@ -1,12 +1,9 @@
 import pygame
 import os
 import random
+from constants import bouncing_pokemon
 
 
-tuple_of_bouncing_pokemon = (
-        'Articuno', 'Blaziken', 'Charizard', 'Dragonite', 'Gardevoir', 'Gengar', 'Groudon',
-        'Gyarados', 'Kyogre', 'Lapras', 'Lucario', 'Lugia', 'Machamp', 'Mew', 'Mewtwo',
-        'Moltres', 'Pikachu', 'Rayquaza', 'Sceptile', 'Swampert', 'Zapdos')
 all_sprites = pygame.sprite.Group()
 
 
@@ -42,7 +39,7 @@ class PokeSprite(pygame.sprite.Sprite):
     def __init__(self, pos, bouncy_surface):
         super().__init__(all_sprites)
         self.bouncy_surface = bouncy_surface
-        pokemon = random.choice(tuple_of_bouncing_pokemon)
+        pokemon = random.choice(bouncing_pokemon)
         self.image = load_image(f'{pokemon}/icon.png')
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
