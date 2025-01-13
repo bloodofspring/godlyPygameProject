@@ -3,7 +3,7 @@ import random
 
 from screens.abstractScreen import AbstractScreen
 from screens.teamChoosing import TeamChoosingScreen
-from util import load_image, PokeSprite, Horizontal_Border, all_sprites
+from util import load_image, PokeSprite, HorizontalBorder, all_sprites
 
 
 class TitleScreen(AbstractScreen):
@@ -17,13 +17,14 @@ class TitleScreen(AbstractScreen):
         background = load_image('forest_background.png')
         self.background = pygame.transform.scale(background, (logo.get_width() // 3 * 2, logo.get_height() // 3 * 2))
 
+        # ToDo: Поправить порнуху (разграничить flicker_frequency и welcome_text_color_change_delta, а то делают одно и то же)
         self.welcome_text_color: tuple[int, int, int] = (0, 0, 0)
         self.flicker_frequency = 1
-        self.delta: int = 5
+        self.welcome_text_color_change_delta: int = 5
 
         self.jumping: bool = False
         self.jump_counter = 0
-        self.horizontal_border = Horizontal_Border(-200, 700, 1500)
+        self.horizontal_border = HorizontalBorder(-200, 700, 1500)
 
         pygame.mixer.music.load('static/music/title_music.mp3')
         pygame.mixer.music.play()
@@ -33,7 +34,7 @@ class TitleScreen(AbstractScreen):
             match event.type:
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        self.runner.current_screen = TeamChoosingScreen(screen=self.screen, runner=self.runner)
+                        self.runner.change_screen(TeamChoosingScreen(screen=self.screen, runner=self.runner))
                         pygame.mixer.music.pause()
                         pygame.mixer.music.unload()
 
@@ -45,12 +46,12 @@ class TitleScreen(AbstractScreen):
             return
 
         if any(map(lambda x: x == 255, self.welcome_text_color)):
-            self.delta = abs(self.delta) * -1
+            self.welcome_text_color_change_delta = abs(self.welcome_text_color_change_delta) * -1
 
         if any(map(lambda x: x == 0, self.welcome_text_color)):
-            self.delta = abs(self.delta)
+            self.welcome_text_color_change_delta = abs(self.welcome_text_color_change_delta)
 
-        self.welcome_text_color = tuple(map(lambda x: (x + self.delta) % 256, self.welcome_text_color))
+        self.welcome_text_color = tuple(map(lambda x: (x + self.welcome_text_color_change_delta) % 256, self.welcome_text_color))
 
         rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_color)
         self.screen.blit(rendered_text, (350, 450))
