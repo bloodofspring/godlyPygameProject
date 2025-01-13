@@ -17,7 +17,7 @@ class ContinueScreen(AbstractScreen):
 
     def update_counter(self):
         if self.counter_value == 0:
-            self.runner.change_screen(CreditsScreen(screen=self.screen, runner=self.runner))
+            self.runner.current_screen = CreditsScreen(screen=self.screen, runner=self.runner)
 
         if self.runner.frame % self.frequency == 0:
             self.counter_value -= 1
@@ -30,7 +30,7 @@ class ContinueScreen(AbstractScreen):
             match event.type:
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        self.runner.change_screen(TeamChoosingScreen(screen=self.screen, runner=self.runner))
+                        self.runner.current_screen = TeamChoosingScreen(screen=self.screen, runner=self.runner)
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)

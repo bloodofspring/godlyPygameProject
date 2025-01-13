@@ -2,9 +2,9 @@ from util import load_image
 
 
 class Pokemon:
-    def __init__(self, entity_id: int):
-        self.id = entity_id
-        # ToDo: Добавить загрузку статов из конфига или бд
+    def __init__(self, id):
+        self.id = id
+        # тестовый вариант, тут грузить из базы данных с помощью id, все стаы тут для теста
         self.name = "Charizard"
         self.attack = 1
         self.current_hp = 1
@@ -14,11 +14,11 @@ class Pokemon:
 
     def take_damage(self, damage: int) -> None:
         if damage > self.current_hp:
-            self.current_hp = 0
+            self.hp = 0
             self.faint()
             return
 
-        self.current_hp -= damage
+        self.hp -= damage
 
     def faint(self) -> None:
         raise NotImplementedError
