@@ -33,7 +33,7 @@ class TitleScreen(AbstractScreen):
             match event.type:
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        self.runner.current_screen = TeamChoosingScreen(screen=self.screen, runner=self.runner)
+                        self.runner.change_screen(TeamChoosingScreen(screen=self.screen, runner=self.runner))
                         pygame.mixer.music.pause()
                         pygame.mixer.music.unload()
 

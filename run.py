@@ -3,6 +3,7 @@ import sys
 import pygame
 
 from constants import window_width, window_height, game_fps
+from screens.abstractScreen import AbstractScreen
 from screens.title import TitleScreen
 from util import load_image
 
@@ -32,6 +33,9 @@ class GameRunner:
             match event.type:
                 case pygame.QUIT:
                     self.is_running = False
+
+    def change_screen(self, new: AbstractScreen):
+        self.current_screen = new
 
     def start(self):
         while self.is_running:
