@@ -1,10 +1,5 @@
 import pygame
 import os
-import random
-from constants import bouncing_pokemon
-
-
-all_sprites = pygame.sprite.Group()
 
 
 def load_image(name, colorkey=None, path="static/images"):
@@ -26,35 +21,3 @@ def load_image(name, colorkey=None, path="static/images"):
         image.set_colorkey(colorkey)
 
     return image
-
-
-class HorizontalBorder(pygame.sprite.Sprite):
-    def __init__(self, x1, y1, x2):
-        super().__init__(all_sprites)
-        self.image = pygame.Surface([x2 - x1, 1])
-        self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
-
-
-class PokeSprite(pygame.sprite.Sprite):
-    def __init__(self, pos, bouncy_surface):
-        super().__init__(all_sprites)
-        self.bouncy_surface = bouncy_surface
-        pokemon = random.choice(bouncing_pokemon)
-        self.image = load_image(f'{pokemon}/icon.png')
-        self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect.x = pos[0]
-        self.rect.y = pos[1] - self.image.get_height()
-        self.velocity_y = -9
-        self.velocity_x = 2
-        self.time = 0
-
-    def update(self):
-        self.time += 1
-        if not pygame.sprite.collide_mask(self, self.bouncy_surface):
-            self.rect = self.rect.move(-self.velocity_x, self.velocity_y)
-        else:
-            self.velocity_y = -9
-            self.rect = self.rect.move(-self.velocity_x, self.velocity_y)
-        if self.time % 2:
-            self.velocity_y += 1
