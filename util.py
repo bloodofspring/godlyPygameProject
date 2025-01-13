@@ -31,7 +31,7 @@ def load_image(name, colorkey=None, path="static/images"):
     return image
 
 
-class Horizontal_Border(pygame.sprite.Sprite):
+class HorizontalBorder(pygame.sprite.Sprite):
     def __init__(self, x1, y1, x2):
         super().__init__(all_sprites)
         self.image = pygame.Surface([x2 - x1, 1])
