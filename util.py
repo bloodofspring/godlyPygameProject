@@ -1,7 +1,7 @@
 import pygame
 import os
 import random
-from constants import bouncing_pokemon
+from constants import pokemon_names
 
 
 all_sprites = pygame.sprite.Group()
@@ -39,7 +39,7 @@ class PokeSprite(pygame.sprite.Sprite):
     def __init__(self, pos, bouncy_surface):
         super().__init__(all_sprites)
         self.bouncy_surface = bouncy_surface
-        pokemon = random.choice(bouncing_pokemon)
+        pokemon = random.choice(pokemon_names)
         self.image = load_image(f'{pokemon}/icon.png')
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
