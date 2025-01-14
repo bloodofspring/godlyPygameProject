@@ -12,9 +12,9 @@ class PokemonEntity:
         self.name = self.db.name
         self.hp = self.db.stats.hp
         self.attack = self.db.stats.attack
-        self.defence = self.db.stats.defence
+        self.defense = self.db.stats.defense
         self.special_attack = self.db.stats.special_attack
-        self.special_defence = self.db.stats.special_defence
+        self.special_defense = self.db.stats.special_defense
         self.speed = self.db.stats.speed
         self.types = self.db.types
 

@@ -7,9 +7,9 @@ from database.models.pokemonType import PokemonType
 class PokemonStats(BaseModel):
     hp = IntegerField()
     attack = IntegerField()
-    defence = IntegerField()
+    defense = IntegerField()
     special_attack = IntegerField()
-    special_defence = IntegerField()
+    special_defense = IntegerField()
     speed = IntegerField()
 
 
