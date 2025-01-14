@@ -1,5 +1,8 @@
 from typing import Final
 
+from database import create_tables
+from database.models import *
+
 pokemon_stats: Final[dict[str, dict[str, tuple[str, ...] | int]]] = {
     "Articuno": {
         "hp": 90,
@@ -191,3 +194,34 @@ pokemon_stats: Final[dict[str, dict[str, tuple[str, ...] | int]]] = {
         "types": ("electric", "flying")
     }
 }
+
+def insert_data():
+    create_tables()
+
+    for pokemon_name, stats in pokemon_stats:
+        ts = []
+
+        for t in stats["types"]:
+            ts.append(PokemonType.get_or_create(name=t)[0])
+
+        stats_db = PokemonStats.create(
+            name=pokemon_name,
+            hp=stats["hp"],
+            atk=stats["atk"],
+            defence=stats["def"],
+            atk_speed=stats["sp.atk"],
+            defence_speed=stats["sp.def"],
+            speed=stats["speed"]
+        )
+
+        pokemon_db = Pokemon.create(
+            stats=stats_db,
+        )
+
+        for t in ts:
+            PokemonToTypes.create(
+                pokemon=pokemon_db,
+                type=t,
+            )
+
+        print(f"Pokemon {pokemon_name} added!")
