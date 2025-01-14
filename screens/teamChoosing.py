@@ -1,8 +1,10 @@
 import pygame
 
 from screens.abstractScreen import AbstractScreen
+
 from screens.abiltyScreen import AbilityScreen
 from entities import PokemonEntity
+
 from constants import pokemon_names
 
 
@@ -23,7 +25,7 @@ class TeamChoosingScreen(AbstractScreen):
                     if event.key == pygame.K_RETURN:
                         if len(list(filter(lambda x: x[1], self.all_pokemon))) == 6:
                             pokemon_team = [i[0] for i in list(filter(lambda x: x[1], self.all_pokemon))]
-                            self.runner.change_screen(AbilityScreen(screen=self.screen, runner=self.runner, pokemon_team=pokemon_team))
+                            self.runner.change_screen(MoveChoosingScreen(screen=self.screen, runner=self.runner, pokemon_team=pokemon_team))
                     if event.key == pygame.K_SPACE:
                         if not sum(map(lambda x: x[1], self.all_pokemon)) == 6 or self.all_pokemon[self.cursor_pos][1]:
                             self.all_pokemon[self.cursor_pos][1] = not self.all_pokemon[self.cursor_pos][1]
