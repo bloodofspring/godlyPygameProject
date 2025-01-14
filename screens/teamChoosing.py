@@ -2,7 +2,7 @@ import pygame
 
 from screens.abstractScreen import AbstractScreen
 from screens.abiltyScreen import AbilityScreen
-from entities import Pokemon
+from entities import PokemonEntity
 from constants import pokemon_names
 
 
@@ -13,7 +13,7 @@ class TeamChoosingScreen(AbstractScreen):
         self.pokemon_font = pygame.font.Font(None, 50)
         self.choose_text = title_font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
         self.tip_text = title_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
-        self.all_pokemon = [[Pokemon(i), False] for i in pokemon_names]
+        self.all_pokemon = [[PokemonEntity(i), False] for i in pokemon_names]
         self.cursor_pos = 0
 
     def handle_events(self, events) -> None:
