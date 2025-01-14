@@ -1,11 +1,9 @@
 import pygame
 
-from screens.abstractScreen import AbstractScreen
-
-from screens.abiltyScreen import AbilityScreen
-from entities import PokemonEntity
-
 from constants import pokemon_names
+from entities import PokemonEntity
+from screens.abstractScreen import AbstractScreen
+from screens.moveScreen import MoveChoosingScreen
 
 
 class TeamChoosingScreen(AbstractScreen):
@@ -25,7 +23,8 @@ class TeamChoosingScreen(AbstractScreen):
                     if event.key == pygame.K_RETURN:
                         if len(list(filter(lambda x: x[1], self.all_pokemon))) == 6:
                             pokemon_team = [i[0] for i in list(filter(lambda x: x[1], self.all_pokemon))]
-                            self.runner.change_screen(MoveChoosingScreen(screen=self.screen, runner=self.runner, pokemon_team=pokemon_team))
+                            self.runner.change_screen(
+                                MoveChoosingScreen(screen=self.screen, runner=self.runner, pokemon_team=pokemon_team))
                     if event.key == pygame.K_SPACE:
                         if not sum(map(lambda x: x[1], self.all_pokemon)) == 6 or self.all_pokemon[self.cursor_pos][1]:
                             self.all_pokemon[self.cursor_pos][1] = not self.all_pokemon[self.cursor_pos][1]
@@ -39,10 +38,12 @@ class TeamChoosingScreen(AbstractScreen):
             if i == 3:
                 pygame.draw.rect(self.screen, pygame.Color('yellow'), (200, 100 + i * 85, 600, 80), 3)
             else:
-                rect_color = (pygame.Color('grey'), pygame.Color('green'))[self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)][1]]
+                rect_color = (pygame.Color('grey'), pygame.Color('green'))[
+                    self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)][1]]
                 pygame.draw.rect(self.screen, rect_color, (200, 100 + i * 85, 600, 80), 3)
 
-            pokemon_text = self.pokemon_font.render(self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)][0].name, True, (0, 0, 0))
+            pokemon_text = self.pokemon_font.render(
+                self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)][0].name, True, (0, 0, 0))
             pokemon_icon = self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)][0].icon
             self.screen.blit(pokemon_text, (350, 125 + i * 85))
             self.screen.blit(pokemon_icon, (200, 90 + i * 85))
