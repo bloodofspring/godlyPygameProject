@@ -198,14 +198,13 @@ pokemon_stats: Final[dict[str, dict[str, tuple[str, ...] | int]]] = {
 def insert_data():
     create_tables()
 
-    for pokemon_name, stats in pokemon_stats:
+    for pokemon_name, stats in zip(pokemon_stats.keys(), pokemon_stats.values()):
         ts = []
 
         for t in stats["types"]:
             ts.append(PokemonType.get_or_create(name=t)[0])
 
         stats_db = PokemonStats.create(
-            name=pokemon_name,
             hp=stats["hp"],
             atk=stats["atk"],
             defence=stats["def"],
@@ -215,6 +214,7 @@ def insert_data():
         )
 
         pokemon_db = Pokemon.create(
+            name=pokemon_name,
             stats=stats_db,
         )
 
@@ -225,3 +225,6 @@ def insert_data():
             )
 
         print(f"Pokemon {pokemon_name} added!")
+
+
+insert_data()
