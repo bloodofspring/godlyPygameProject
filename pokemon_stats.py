@@ -206,10 +206,10 @@ def insert_data():
 
         stats_db = PokemonStats.create(
             hp=stats["hp"],
-            atk=stats["atk"],
+            attack=stats["atk"],
             defence=stats["def"],
-            atk_speed=stats["sp.atk"],
-            defence_speed=stats["sp.def"],
+            special_attack=stats["sp.atk"],
+            special_defence=stats["sp.def"],
             speed=stats["speed"]
         )
 
