@@ -1,5 +1,6 @@
 from database.models import Pokemon
 from util import load_image
+import os
 
 
 class PokemonEntity:
@@ -19,6 +20,9 @@ class PokemonEntity:
         self.types = self.db.types
 
         self.icon = load_image('icon.png', path=f'static/images/{self.name}')
+        self.front_frames = [load_image(f'front{i}.png', path=f'static/images/{self.name}') for i in range(len(os.listdir(f'static/images/{self.name}')) // 2)]
+        self.back_frames = [load_image(f'back{i}.png', path=f'static/images/{self.name}') for i in range(len(os.listdir(f'static/images/{self.name}')) // 2)]
+
         self.current_hp = self.hp
 
     def take_damage(self, damage: int) -> None:
