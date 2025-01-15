@@ -49,7 +49,7 @@ class TeamChoosingScreen(AbstractScreen):
             self.screen.blit(pokemon_text, (350, 125 + i * 85))
             self.screen.blit(pokemon.icon, (200, 90 + i * 85))
             if len(pokemon.types) == 1:
-                self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[0]}.PNG'))
+                self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[0]}.PNG'))  # ToDo: просто сделай так, чтобы в этой строке открывался файл, дальше всё на мне
             else:
                 print(2)
 
