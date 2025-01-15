@@ -1,5 +1,6 @@
 from peewee import IntegerField, ForeignKeyField, CharField
 
+from database.models.attacks import PokemonAttack
 from database.models.base import BaseModel
 from database.models.pokemonType import PokemonType
 
@@ -21,3 +22,8 @@ class Pokemon(BaseModel):
 class PokemonToTypes(BaseModel):
     pokemon = ForeignKeyField(Pokemon, backref="types")
     type = ForeignKeyField(PokemonType, backref="pokemons")
+
+
+class PokemonToAttacks(BaseModel):
+    pokemon = ForeignKeyField(Pokemon, backref="attacks")
+    attack = ForeignKeyField(PokemonAttack, backref="pokemons")

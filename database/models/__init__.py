@@ -1,4 +1,5 @@
-from .pokemon import PokemonStats, Pokemon, PokemonToTypes
+from .attacks import PokemonAttack
+from .pokemon import PokemonStats, Pokemon, PokemonToTypes, PokemonToAttacks
 from .pokemonType import PokemonType, PokemonTypeInteraction
 
 active_models = [
@@ -7,5 +8,8 @@ active_models = [
     PokemonToTypes,
 
     PokemonType,
-    PokemonTypeInteraction
+    PokemonTypeInteraction,
+    PokemonToAttacks,
+
+    PokemonAttack,
 ]
