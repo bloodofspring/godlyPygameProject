@@ -4,6 +4,7 @@ from constants import pokemon_names
 from entities import PokemonEntity
 from screens.abstractScreen import AbstractScreen
 from screens.moveScreen import MoveChoosingScreen
+from util import load_image
 
 
 class TeamChoosingScreen(AbstractScreen):
@@ -44,9 +45,14 @@ class TeamChoosingScreen(AbstractScreen):
 
             pokemon_text = self.pokemon_font.render(
                 self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)][0].name, True, (0, 0, 0))
-            pokemon_icon = self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)][0].icon
+            pokemon = self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)][0]
             self.screen.blit(pokemon_text, (350, 125 + i * 85))
-            self.screen.blit(pokemon_icon, (200, 90 + i * 85))
+            self.screen.blit(pokemon.icon, (200, 90 + i * 85))
+            if len(pokemon.types) == 1:
+                self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[0].type.name}.PNG'), (700, 123 + i * 85))
+            else:
+                self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[0].type.name}.PNG'), (600, 123 + i * 85))
+                self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[1].type.name}.PNG'), (700, 123 + i * 85))
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
