@@ -4,6 +4,7 @@ from constants import attacks_per_pokemon
 from database.models import PokemonAttack
 from entities import PokemonEntity
 from screens.abstractScreen import AbstractScreen
+from screens.battleScreen import BattleScreen
 from util import load_image
 
 
@@ -34,8 +35,7 @@ class MoveChoosingScreen(AbstractScreen):
         self.pokemon_team_position += d
 
         if self.pokemon_team_position == len(self.pokemon_team):
-            print("Changing screen...")
-            # self.runner.change_screen() ToDo: add next screen and uncomment
+            self.runner.change_screen(BattleScreen(screen=self.screen, runner=self.runner))
 
     def render_attacks(self):
         current_pokemon: PokemonEntity = self.pokemon_team[self.pokemon_team_position]
