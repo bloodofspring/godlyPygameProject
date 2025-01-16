@@ -34,9 +34,9 @@ class TitleScreen(AbstractScreen):
             match event.type:
                 case pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        self.runner.change_screen(TeamChoosingScreen(screen=self.screen, runner=self.runner))
-                        pygame.mixer.music.pause()
+                        pygame.mixer.music.stop()
                         pygame.mixer.music.unload()
+                        self.runner.change_screen(TeamChoosingScreen(screen=self.screen, runner=self.runner))
 
     def update_welcome_text(self) -> None:
         if self.runner.frame % self.flicker_frequency:

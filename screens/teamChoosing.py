@@ -17,6 +17,9 @@ class TeamChoosingScreen(AbstractScreen):
         self.all_pokemon = [[PokemonEntity(i), False] for i in pokemon_names]
         self.cursor_pos = 0
 
+        pygame.mixer.music.load('static/music/preparations_music.mp3')
+        pygame.mixer.music.play(loops=-1)  # -1 означает, что музыка бесконечно зациклена
+
     def handle_events(self, events) -> None:
         for event in events:
             match event.type:

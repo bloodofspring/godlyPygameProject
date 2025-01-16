@@ -35,7 +35,9 @@ class MoveChoosingScreen(AbstractScreen):
         self.pokemon_team_position += d
 
         if self.pokemon_team_position == len(self.pokemon_team):
-            self.runner.change_screen(BattleScreen(screen=self.screen, runner=self.runner))
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+            self.runner.change_screen(BattleScreen(screen=self.screen, runner=self.runner, battle_counter=1))
 
             return True
 
