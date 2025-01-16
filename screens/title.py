@@ -27,7 +27,7 @@ class TitleScreen(AbstractScreen):
         self.horizontal_border = HorizontalBorder(-200, 700, 1500)
 
         pygame.mixer.music.load('static/music/title_music.mp3')
-        # pygame.mixer.music.play()  ToDo: Uncomment before merge
+        pygame.mixer.music.play()
 
     def handle_events(self, events) -> None:
         for event in events:
