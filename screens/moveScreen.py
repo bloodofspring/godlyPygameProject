@@ -1,14 +1,16 @@
 import pygame
 
+from entities import PokemonEntity
 from screens.abstractScreen import AbstractScreen
+from util import load_image
 
 
 class MoveChoosingScreen(AbstractScreen):
     def __init__(self, screen, runner, pokemon_team):
         super().__init__(screen=screen, runner=runner)
 
-        self.pokemon_team = pokemon_team
-        self.player_position: int = 0
+        self.pokemon_team: list[PokemonEntity] = pokemon_team
+        self.player_cur_position: int = 0
 
         title_font = pygame.font.Font(None, 50)
         self.pokemon_font = pygame.font.Font(None, 50)
@@ -16,10 +18,25 @@ class MoveChoosingScreen(AbstractScreen):
         self.tip_text = title_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
 
     def change_player_position(self, d: int):
-        self.player_position = (self.player_position + d) % len(self.pokemon_team)
+        self.player_cur_position = (self.player_cur_position + d) % len(self.pokemon_team)
 
     def render_pokemons(self):
-        pass
+        for i, pokemon in zip(range(len(self.pokemon_team)), self.pokemon_team):
+            if i == self.player_cur_position:
+                pygame.draw.rect(self.screen, pygame.Color('yellow'), (75, 123 + i * 85, 600, 80), 3)
+            else:
+                rect_color = pygame.Color('gray')
+                pygame.draw.rect(self.screen, rect_color, (75, 123 + i * 85, 600, 80), 3)
+
+            pokemon_text = self.pokemon_font.render(pokemon.name, True, (0, 0, 0))
+            self.screen.blit(pokemon_text, (225, 145 + i * 85))
+            self.screen.blit(pokemon.icon, (75, 113 + i * 85))
+
+            if len(pokemon.types) == 1:
+                self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[0].type.name}.PNG'), (575, 146 + i * 85))
+            else:
+                self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[0].type.name}.PNG'), (475, 146 + i * 85))
+                self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[1].type.name}.PNG'), (575, 146 + i * 85))
 
     def render_attacks(self):
         pass
@@ -35,15 +52,17 @@ class MoveChoosingScreen(AbstractScreen):
                         pass  # enable attack
 
                     if event.key in (pygame.K_w, pygame.K_UP):
-                        self.change_player_position(1)
+                        self.change_player_position(-1)
 
                     if event.key in (pygame.K_s, pygame.K_DOWN):
-                        self.change_player_position(-1)
+                        self.change_player_position(1)
 
     def update(self, events, **kwargs) -> None:
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.choose_text, (210, 0))
         self.screen.blit(self.tip_text, (100, 50))
+
+        self.render_pokemons()
 
         self.handle_events(events=events)
 
