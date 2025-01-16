@@ -84,9 +84,6 @@ class MoveChoosingScreen(AbstractScreen):
         for event in events:
             match event.type:
                 case pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        pass  # To the next screen
-
                     if event.key == pygame.K_SPACE:
                         if self.current_attack in self.chosen_attacks[self.pokemon_team[self.pokemon_team_position]]:
                             self.chosen_attacks[self.pokemon_team[self.pokemon_team_position]].remove(self.current_attack)
