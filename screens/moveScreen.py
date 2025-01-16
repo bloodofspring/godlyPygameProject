@@ -31,11 +31,15 @@ class MoveChoosingScreen(AbstractScreen):
     def change_player_position(self, d: int):
         self.player_cur_position = (self.player_cur_position + d) % len(self.pokemon_team[self.pokemon_team_position].db.attacks)
 
-    def change_pokemon_team_position(self, d: int = 1):
+    def change_pokemon_team_position(self, d: int = 1) -> bool:
         self.pokemon_team_position += d
 
         if self.pokemon_team_position == len(self.pokemon_team):
             self.runner.change_screen(BattleScreen(screen=self.screen, runner=self.runner))
+
+            return True
+
+        return False
 
     def render_attacks(self):
         current_pokemon: PokemonEntity = self.pokemon_team[self.pokemon_team_position]
@@ -102,7 +106,8 @@ class MoveChoosingScreen(AbstractScreen):
         self.screen.blit(self.tip_text, (100, 50))
 
         if len(self.chosen_attacks[self.pokemon_team[self.pokemon_team_position]]) == attacks_per_pokemon:
-            self.change_pokemon_team_position()
+            if self.change_pokemon_team_position():
+                return
 
         self.render_pokemons()
         self.render_attacks()
