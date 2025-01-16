@@ -10,6 +10,7 @@ class MoveChoosingScreen(AbstractScreen):
         super().__init__(screen=screen, runner=runner)
 
         self.pokemon_team: list[PokemonEntity] = pokemon_team
+        self.pokemon_team_position = 0
         self.player_cur_position: int = 0
 
         title_font = pygame.font.Font(None, 50)
@@ -20,9 +21,16 @@ class MoveChoosingScreen(AbstractScreen):
     def change_player_position(self, d: int):
         self.player_cur_position = (self.player_cur_position + d) % len(self.pokemon_team)
 
+    def change_pokemon_team_position(self, d: int = 1):
+        self.pokemon_team_position += d
+
+        if self.pokemon_team_position == len(self.pokemon_team):
+            print("Changing screen...")
+            # self.runner.change_screen() ToDo: add next screen and uncomment
+
     def render_pokemons(self):
         for i, pokemon in zip(range(len(self.pokemon_team)), self.pokemon_team):
-            if i == self.player_cur_position:
+            if i == self.pokemon_team_position:
                 pygame.draw.rect(self.screen, pygame.Color('yellow'), (75, 123 + i * 85, 600, 80), 3)
             else:
                 rect_color = pygame.Color('gray')
