@@ -1,5 +1,6 @@
 import pygame
 
+from database.models import PokemonAttack
 from entities import PokemonEntity
 from screens.abstractScreen import AbstractScreen
 from util import load_image
@@ -28,13 +29,31 @@ class MoveChoosingScreen(AbstractScreen):
             print("Changing screen...")
             # self.runner.change_screen() ToDo: add next screen and uncomment
 
+    def render_attacks(self):
+        current_pokemon: PokemonEntity = self.pokemon_team[self.pokemon_team_position]
+        attacks: tuple[PokemonAttack, ...] = tuple(map(lambda x: x.attack, current_pokemon.db.attacks))
+
+        # print(list(map(lambda x: x.name, attacks))) ToDo: Remove
+
+        for i, attack in zip(range(len(attacks)), attacks):
+            if i == self.player_cur_position:
+                pygame.draw.rect(self.screen, pygame.Color('yellow'), (690, 123 + i * 85, 250, 80), 3)
+            else:
+                rect_color = pygame.Color('gray')
+                # if chosen: rect_color = pygame.Color('green')
+                pygame.draw.rect(self.screen, rect_color, (690, 123 + i * 85, 250, 80), 3)
+
+            attack_text = self.pokemon_font.render(attack.name, True, (0, 0, 0))
+            self.screen.blit(attack_text, (700, 145 + i * 85))
+            self.screen.blit(load_image(f'pokemonTypes/{attack.type.name}.PNG'), (575, 146 + i * 85))
+
     def render_pokemons(self):
         for i, pokemon in zip(range(len(self.pokemon_team)), self.pokemon_team):
             if i == self.pokemon_team_position:
-                pygame.draw.rect(self.screen, pygame.Color('yellow'), (75, 123 + i * 85, 600, 80), 3)
+                pygame.draw.rect(self.screen, pygame.Color('yellow'), (65, 123 + i * 85, 600, 80), 3)
             else:
                 rect_color = pygame.Color('gray')
-                pygame.draw.rect(self.screen, rect_color, (75, 123 + i * 85, 600, 80), 3)
+                pygame.draw.rect(self.screen, rect_color, (65, 123 + i * 85, 600, 80), 3)
 
             pokemon_text = self.pokemon_font.render(pokemon.name, True, (0, 0, 0))
             self.screen.blit(pokemon_text, (225, 145 + i * 85))
@@ -45,9 +64,6 @@ class MoveChoosingScreen(AbstractScreen):
             else:
                 self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[0].type.name}.PNG'), (475, 146 + i * 85))
                 self.screen.blit(load_image(f'pokemonTypes/{pokemon.types[1].type.name}.PNG'), (575, 146 + i * 85))
-
-    def render_attacks(self):
-        pass
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -71,6 +87,7 @@ class MoveChoosingScreen(AbstractScreen):
         self.screen.blit(self.tip_text, (100, 50))
 
         self.render_pokemons()
+        self.render_attacks()
 
         self.handle_events(events=events)
 
