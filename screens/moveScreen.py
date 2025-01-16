@@ -28,7 +28,7 @@ class MoveChoosingScreen(AbstractScreen):
         self.choose_text = title_font.render("Choose 4 moves for each pokemon", True, (0, 0, 0))
         self.tip_text = title_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
 
-    def change_player_position(self, d: int):
+    def change_cursor_position(self, d: int):
         self.player_cur_position = (self.player_cur_position + d) % len(self.pokemon_team[self.pokemon_team_position].db.attacks)
 
     def change_pokemon_team_position(self, d: int = 1) -> bool:
@@ -95,10 +95,10 @@ class MoveChoosingScreen(AbstractScreen):
                             self.chosen_attacks[self.pokemon_team[self.pokemon_team_position]].append(self.current_attack)
 
                     if event.key in (pygame.K_w, pygame.K_UP):
-                        self.change_player_position(-1)
+                        self.change_cursor_position(-1)
 
                     if event.key in (pygame.K_s, pygame.K_DOWN):
-                        self.change_player_position(1)
+                        self.change_cursor_position(1)
 
     def update(self, events, **kwargs) -> None:
         self.screen.fill((255, 255, 255))
