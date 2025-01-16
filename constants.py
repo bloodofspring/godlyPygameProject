@@ -9,3 +9,5 @@ pokemon_names: Final[tuple[str, ...]] = (
         'Articuno', 'Blaziken', 'Charizard', 'Dragonite', 'Gardevoir', 'Gengar', 'Groudon',
         'Gyarados', 'Kyogre', 'Lapras', 'Lucario', 'Lugia', 'Machamp', 'Mew', 'Mewtwo',
         'Moltres', 'Pikachu', 'Rayquaza', 'Sceptile', 'Swampert', 'Zapdos')
+
+attacks_per_pokemon: Final[int] = 4
