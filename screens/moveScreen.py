@@ -29,7 +29,8 @@ class MoveChoosingScreen(AbstractScreen):
         self.tip_text = title_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
 
     def change_cursor_position(self, d: int):
-        self.player_cur_position = (self.player_cur_position + d) % len(self.pokemon_team[self.pokemon_team_position].db.attacks)
+        self.player_cur_position = (
+                (self.player_cur_position + d) % len(self.pokemon_team[self.pokemon_team_position].db.attacks))
 
     def change_pokemon_team_position(self, d: int = 1) -> bool:
         self.pokemon_team_position += d
@@ -37,7 +38,8 @@ class MoveChoosingScreen(AbstractScreen):
         if self.pokemon_team_position == len(self.pokemon_team):
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
-            self.runner.change_screen(BattleScreen(screen=self.screen, runner=self.runner, battle_counter=1))
+            self.runner.change_screen(BattleScreen(screen=self.screen, runner=self.runner, battle_counter=1,
+                                                   pokemon_team=self.pokemon_team, attacks=self.chosen_attacks))
 
             return True
 
