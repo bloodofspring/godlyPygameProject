@@ -3,7 +3,7 @@ import sys
 import pygame
 
 from constants import window_width, window_height, game_fps
-from screens.abstractScreen import AbstractScreen
+from screens.abstract import AbstractScreen
 from screens.title import TitleScreen
 from util import load_image
 

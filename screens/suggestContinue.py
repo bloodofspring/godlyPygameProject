@@ -1,7 +1,7 @@
 import pygame
 
-from screens.abstractScreen import AbstractScreen
-from screens.creditsScreen import CreditsScreen
+from screens.abstract import AbstractScreen
+from screens.credits import CreditsScreen
 from screens.teamChoosing import TeamChoosingScreen
 
 
