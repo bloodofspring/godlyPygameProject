@@ -10,7 +10,7 @@ class BattleScreen(AbstractScreen):
         self.chosen_attacks = chosen_attacks
         self.battle_counter = battle_counter
         self.fighting_pokemon = pokemon_team[0]
-        self.cursor_position: list[int, int] = [0, 0]
+        self.cursor_position: list[int] = [0, 0]
 
         self.font = pygame.font.Font(None, 50)
 
