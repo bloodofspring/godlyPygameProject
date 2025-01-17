@@ -35,7 +35,13 @@ class MoveChoosingScreen(AbstractScreen):
         if self.pokemon_team_position == len(self.pokemon_team):
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
-            self.runner.change_screen(BattleScreen(screen=self.screen, runner=self.runner, battle_counter=1))
+            self.runner.change_screen(BattleScreen(
+                screen=self.screen,
+                runner=self.runner,
+                battle_counter=1,
+                pokemon_team=self.pokemon_team,
+                chosen_attacks=self.chosen_attacks
+            ))
 
             return True
 
@@ -82,7 +88,6 @@ class MoveChoosingScreen(AbstractScreen):
                 rect_start_x -= 100
 
     def select_attack(self):
-        print(1)
         if self.current_attack in self.chosen_attacks[self.current_pokemon]:
             self.chosen_attacks[self.current_pokemon].remove(self.current_attack)
             return

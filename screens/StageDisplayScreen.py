@@ -1,6 +1,6 @@
 import pygame
-from screens.abstractScreen import AbstractScreen
-from screens.battleScreen import BattleScreen
+from screens.abstract import AbstractScreen
+from screens.battle import BattleScreen
 
 
 class StageScreen(AbstractScreen):
