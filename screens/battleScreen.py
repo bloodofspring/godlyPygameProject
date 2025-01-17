@@ -3,10 +3,10 @@ from screens.abstractScreen import AbstractScreen
 
 
 class BattleScreen(AbstractScreen):
-    def __init__(self, screen, runner, battle_counter, pokemon_team, attacks):
+    def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
         super().__init__(screen=screen, runner=runner)
         self.pokemon_team = pokemon_team
-        self.chosen_attacks = attacks
+        self.chosen_attacks = chosen_attacks
         self.battle_counter = battle_counter
         self.fighting_pokemon = pokemon_team[0]
         self.cursor_position: list[int, int] = [0, 0]

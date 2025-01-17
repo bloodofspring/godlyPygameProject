@@ -4,7 +4,7 @@ from constants import attacks_per_pokemon
 from database.models import PokemonAttack
 from entities import PokemonEntity
 from screens.abstractScreen import AbstractScreen
-from screens.battleScreen import BattleScreen
+from screens.StageDisplayScreen import StageScreen
 from util import load_image
 
 
@@ -38,8 +38,8 @@ class MoveChoosingScreen(AbstractScreen):
         if self.pokemon_team_position == len(self.pokemon_team):
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
-            self.runner.change_screen(BattleScreen(screen=self.screen, runner=self.runner, battle_counter=1,
-                                                   pokemon_team=self.pokemon_team, attacks=self.chosen_attacks))
+            self.runner.change_screen(StageScreen(screen=self.screen, runner=self.runner, battle_counter=1,
+                                                   pokemon_team=self.pokemon_team, chosen_attacks=self.chosen_attacks))
 
             return True
 
