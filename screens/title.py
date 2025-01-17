@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from screens.abstractScreen import AbstractScreen
+from screens.abstract import AbstractScreen
 from screens.teamChoosing import TeamChoosingScreen
 from util import load_image, PokeSprite, HorizontalBorder, all_sprites
 

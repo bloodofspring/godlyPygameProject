@@ -1,6 +1,5 @@
 import pygame
 from screens.abstractScreen import AbstractScreen
-from util import load_image
 # from screens.StageDisplayScreen import StageScreen
 # ToDo: спасите от цикличного импорта
 
@@ -13,9 +12,6 @@ class BattleScreen(AbstractScreen):
         self.fighting_pokemon = pokemon_team[0]
         self.cursor_position: list[int, int] = [0, 0]
         self.current_ally_frame = 1
-
-        battlefield = load_image('battlefield.png')
-        self.battlefield = pygame.transform.scale(battlefield, (battlefield.get_width() * 3, battlefield.get_height() * 3))
 
         self.font = pygame.font.Font(None, 50)
 
@@ -90,7 +86,6 @@ class BattleScreen(AbstractScreen):
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
         self.screen.fill((255, 255, 255))
-        self.screen.blit(self.battlefield, (0, 0))
 
         self.render_buttons()
         self.render_reserved_pokemon()

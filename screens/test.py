@@ -1,4 +1,4 @@
-from screens.abstractScreen import AbstractScreen
+from screens.abstract import AbstractScreen
 
 
 class EmptyScreen(AbstractScreen):

@@ -1,5 +1,5 @@
 import pygame
-from screens.abstractScreen import AbstractScreen
+from screens.abstract import AbstractScreen
 
 
 class CreditsScreen(AbstractScreen):
