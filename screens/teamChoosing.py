@@ -69,7 +69,7 @@ class TeamChoosingScreen(AbstractScreen):
 
             rect_start_x = 700
             for t in pokemon.types:
-                self.screen.blit(load_image(f'pokemonTypes/{t.type.name}.PNG'), (rect_start_x, 146 + i * 85))
+                self.screen.blit(load_image(f'pokemonTypes/{t.type.name}.PNG'), (rect_start_x, 123 + i * 85))
                 rect_start_x -= 100
 
     def update(self, events, **kwargs) -> None:
