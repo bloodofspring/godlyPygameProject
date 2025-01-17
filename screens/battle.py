@@ -1,5 +1,7 @@
 import pygame
 from screens.abstract import AbstractScreen
+from util import load_image
+import constants
 # from screens.StageDisplayScreen import StageScreen
 # ToDo: спасите от цикличного импорта
 
@@ -12,6 +14,8 @@ class BattleScreen(AbstractScreen):
         self.fighting_pokemon = pokemon_team[0]
         self.cursor_position: list[int] = [0, 0]
         self.current_ally_frame = 1
+
+        self.battlefield = pygame.transform.scale(load_image('battlefield.png'), (constants.window_width, constants.window_height))
 
         self.font = pygame.font.Font(None, 50)
 
@@ -36,9 +40,9 @@ class BattleScreen(AbstractScreen):
         for x in range(2):
             for y in range(2):
                 if x == self.cursor_position[0] and y == self.cursor_position[1]:
-                    pygame.draw.rect(self.screen, pygame.Color('yellow'), (15 + x * 255, 440 + y * 75, 250, 70), 3)
+                    pygame.draw.rect(self.screen, pygame.Color('yellow'), (480 + x * 255, 440 + y * 75, 250, 70), 3)
                 else:
-                    pygame.draw.rect(self.screen, pygame.Color('gray'), (15 + x * 255, 440 + y * 75, 250, 70), 3)
+                    pygame.draw.rect(self.screen, pygame.Color('gray'), (480 + x * 255, 440 + y * 75, 250, 70), 3)
         for x in range(5):
             if x == self.cursor_position[0] and self.cursor_position[1] == 2:
                 pygame.draw.rect(self.screen, pygame.Color('yellow'), (15 + x * 195, 600, 190, 80), 3)
@@ -53,12 +57,12 @@ class BattleScreen(AbstractScreen):
         for y in range(2):
             for x in range(2):
                 move_text = self.font.render(self.chosen_attacks[self.fighting_pokemon][x * 2 + y].name, True, (0, 0, 0))
-                self.screen.blit(move_text, (25 + x * 255, 460 + y * 75))
+                self.screen.blit(move_text, (490 + x * 255, 460 + y * 75))
 
     def render_ally_fighting_pokemon(self):
         frame = self.fighting_pokemon.back_frames[(self.current_ally_frame - 1) // 3]
         frame = pygame.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2))
-        self.screen.blit(frame, (50, 250))
+        self.screen.blit(frame, (250, 400))
         self.current_ally_frame += 1
         if self.current_ally_frame // 3 == len(self.fighting_pokemon.back_frames):
             self.current_ally_frame = 1
@@ -86,6 +90,7 @@ class BattleScreen(AbstractScreen):
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
         self.screen.fill((255, 255, 255))
+        self.screen.blit(self.battlefield, (0, 0))
 
         self.render_buttons()
         self.render_reserved_pokemon()
