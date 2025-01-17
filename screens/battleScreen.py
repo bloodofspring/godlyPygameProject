@@ -12,7 +12,7 @@ class BattleScreen(AbstractScreen):
         self.fighting_pokemon = pokemon_team[0]
         self.cursor_position: list[int, int] = [0, 0]
 
-        self.font = pygame.font.Font(None, 80)
+        self.font = pygame.font.Font(None, 50)
 
         if self.battle_counter != 3:
             pygame.mixer.music.load('static/music/battle_music.mp3')
@@ -40,9 +40,20 @@ class BattleScreen(AbstractScreen):
                     pygame.draw.rect(self.screen, pygame.Color('gray'), (15 + x * 255, 440 + y * 75, 250, 70), 3)
         for x in range(5):
             if x == self.cursor_position[0] and self.cursor_position[1] == 2:
-                pygame.draw.rect(self.screen, pygame.Color('yellow'), (15 + x * 195, 600, 190, 90), 3)
+                pygame.draw.rect(self.screen, pygame.Color('yellow'), (15 + x * 195, 600, 190, 80), 3)
             else:
-                pygame.draw.rect(self.screen, pygame.Color('gray'), (15 + x * 195, 600, 190, 90), 3)
+                pygame.draw.rect(self.screen, pygame.Color('gray'), (15 + x * 195, 600, 190, 80), 3)
+
+    def render_reserved_pokemon(self):
+        for i in range(5):
+            self.screen.blit(self.pokemon_team[i + 1].icon, (15 + i * 195, 590))
+
+    def render_pokemon_attacks(self):
+        for y in range(2):
+            for x in range(2):
+                move_text = self.font.render(self.chosen_attacks[self.fighting_pokemon][x * 2 + y].name, True, (0, 0, 0))
+                self.screen.blit(move_text, (25 + x * 255, 460 + y * 75))
+
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -68,3 +79,5 @@ class BattleScreen(AbstractScreen):
         self.screen.fill((255, 255, 255))
 
         self.render_buttons()
+        self.render_reserved_pokemon()
+        self.render_pokemon_attacks()
