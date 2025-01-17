@@ -2,8 +2,8 @@ import pygame
 
 from constants import pokemon_names
 from entities import PokemonEntity
-from screens.abstractScreen import AbstractScreen
-from screens.moveScreen import MoveChoosingScreen
+from screens.abstract import AbstractScreen
+from screens.moveChoosing import MoveChoosingScreen
 from util import load_image
 
 
