@@ -1,6 +1,7 @@
 import pygame
 from screens.abstractScreen import AbstractScreen
-
+# from screens.StageDisplayScreen import StageScreen
+# ToDo: спасите от цикличного импорта
 
 class BattleScreen(AbstractScreen):
     def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
@@ -30,7 +31,18 @@ class BattleScreen(AbstractScreen):
                 self.cursor_position[0] = min(1, self.cursor_position[0])
             self.cursor_position[1] = (self.cursor_position[1] + y) % 3
 
-        print(self.cursor_position)
+    def render_buttons(self):
+        for x in range(2):
+            for y in range(2):
+                if x == self.cursor_position[0] and y == self.cursor_position[1]:
+                    pygame.draw.rect(self.screen, pygame.Color('yellow'), (15 + x * 255, 440 + y * 75, 250, 70), 3)
+                else:
+                    pygame.draw.rect(self.screen, pygame.Color('gray'), (15 + x * 255, 440 + y * 75, 250, 70), 3)
+        for x in range(5):
+            if x == self.cursor_position[0] and self.cursor_position[1] == 2:
+                pygame.draw.rect(self.screen, pygame.Color('yellow'), (15 + x * 195, 600, 190, 90), 3)
+            else:
+                pygame.draw.rect(self.screen, pygame.Color('gray'), (15 + x * 195, 600, 190, 90), 3)
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -54,3 +66,5 @@ class BattleScreen(AbstractScreen):
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
         self.screen.fill((255, 255, 255))
+
+        self.render_buttons()
