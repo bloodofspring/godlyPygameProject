@@ -2,7 +2,7 @@ import sys
 
 import pygame
 
-from constants import window_width, window_height, game_fps
+from constants import window_width, window_height, game_fps, debug
 from screens.abstract import AbstractScreen
 from screens.title import TitleScreen
 from util import load_image
@@ -27,6 +27,9 @@ class GameRunner:
         self.is_running: bool = True
         self.frame: int = 0
         self.clock = pygame.time.Clock()
+
+        if debug:
+            pygame.mixer.music.set_volume(0.05)
 
     def handle_events(self, events):
         for event in events:
