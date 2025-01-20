@@ -66,7 +66,7 @@ class BattleScreen(AbstractScreen):
         for i in range(5):
             self.screen.blit(self.pokemon_team[i + 1].icon, (15 + i * 195, 590))
 
-    def render_hp(self):
+    def render_fighting_pokemon_hp(self):
         pygame.draw.rect(self.screen, pygame.Color('white'), (10, 280, 300, 80))
         ally_name = self.name_font.render(self.fighting_pokemon.name, True, (0, 0, 0))
         self.screen.blit(ally_name, (10 + (300 - ally_name.get_width()) // 2, 280))
@@ -100,7 +100,7 @@ class BattleScreen(AbstractScreen):
     def render_enemy_fighting_pokemon(self):
         frame = self.enemy_fighting_pokemon.front_frames[(self.current_enemy_frame - 1) // 3]
         frame = pygame.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2))
-        self.screen.blit(frame, (620, 250))
+        self.screen.blit(frame, (620, 240))
         self.current_enemy_frame += 1
         if self.current_enemy_frame // 3 == len(self.enemy_fighting_pokemon.front_frames):
             self.current_enemy_frame = 1
@@ -135,7 +135,7 @@ class BattleScreen(AbstractScreen):
         self.render_pokemon_attacks()
         self.render_ally_fighting_pokemon()
         self.render_enemy_fighting_pokemon()
-        self.render_hp()
+        self.render_fighting_pokemon_hp()
 
 
 class StageScreen(AbstractScreen):
