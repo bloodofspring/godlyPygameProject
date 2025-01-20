@@ -3,9 +3,8 @@ import pygame
 from constants import attacks_per_pokemon
 from database.models import PokemonAttack
 from entities import PokemonEntity
-from screens.StageDisplayScreen import StageScreen
 from screens.abstract import AbstractScreen
-from screens.battle import BattleScreen
+from screens.battle import StageScreen
 from util import load_image
 
 

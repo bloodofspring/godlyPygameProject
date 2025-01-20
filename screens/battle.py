@@ -2,8 +2,10 @@ import pygame
 from screens.abstract import AbstractScreen
 from util import load_image
 import constants
-# from screens.StageDisplayScreen import StageScreen
-# ToDo: спасите от цикличного импорта
+from database.models import PokemonAttack
+from entities import PokemonEntity
+import random
+
 
 class BattleScreen(AbstractScreen):
     def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
@@ -14,6 +16,7 @@ class BattleScreen(AbstractScreen):
         self.fighting_pokemon = pokemon_team[0]
         self.cursor_position: list[int] = [0, 0]
         self.current_ally_frame = 1
+        self.current_enemy_frame = 1
 
         self.battlefield = pygame.transform.scale(load_image('battlefield.png'), (constants.window_width, constants.window_height))
 
@@ -24,6 +27,15 @@ class BattleScreen(AbstractScreen):
         else:
             pygame.mixer.music.load('static/music/last_battle_music.mp3')
         pygame.mixer.music.play(loops=-1)  # -1 означает, что музыка бесконечно зациклена
+
+        self.generate_enemy()
+
+    def generate_enemy(self):
+        self.enemy_pokemon = random.choices([PokemonEntity(i) for i in constants.pokemon_names], k=6)
+        self.enemy_attacks: dict[PokemonEntity, list[PokemonAttack]] = {}
+        for i in self.enemy_pokemon:
+            self.enemy_attacks[i] = random.choices(list(map(lambda x: x.attack, i.db.attacks)), k=4)
+        self.enemy_fighting_pokemon = self.enemy_pokemon[0]
 
     def change_cursor_position(self, x, y):
         if y == 0:
@@ -67,6 +79,14 @@ class BattleScreen(AbstractScreen):
         if self.current_ally_frame // 3 == len(self.fighting_pokemon.back_frames):
             self.current_ally_frame = 1
 
+    def render_enemy_fighting_pokemon(self):
+        frame = self.enemy_fighting_pokemon.front_frames[(self.current_enemy_frame - 1) // 3]
+        frame = pygame.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2))
+        self.screen.blit(frame, (620, 250))
+        self.current_enemy_frame += 1
+        if self.current_enemy_frame // 3 == len(self.fighting_pokemon.back_frames):
+            self.current_enemy_frame = 1
+
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -96,3 +116,29 @@ class BattleScreen(AbstractScreen):
         self.render_reserved_pokemon()
         self.render_pokemon_attacks()
         self.render_ally_fighting_pokemon()
+        self.render_enemy_fighting_pokemon()
+
+
+class StageScreen(AbstractScreen):
+    def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
+        super().__init__(screen=screen, runner=runner)
+
+        self.pokemon_team = pokemon_team
+        self.chosen_attacks = chosen_attacks
+        self.battle_counter = battle_counter
+        font = pygame.font.Font(None, 200)
+        self.stage_text = font.render(f"Stage {battle_counter}", True, (0, 0, 0))
+
+    def handle_events(self, events) -> None:
+        for event in events:
+            match event.type:
+                case pygame.KEYUP:
+                    if event.key == pygame.K_RETURN:
+                        self.runner.change_screen(
+                            BattleScreen(screen=self.screen, runner=self.runner, battle_counter=self.battle_counter,
+                                         pokemon_team=self.pokemon_team, chosen_attacks=self.chosen_attacks))
+
+    def update(self, events, **kwargs) -> None:
+        self.handle_events(events)
+        self.screen.fill((255, 255, 255))
+        self.screen.blit(self.stage_text, (260, 250))
