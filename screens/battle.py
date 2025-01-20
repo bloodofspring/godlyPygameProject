@@ -20,7 +20,8 @@ class BattleScreen(AbstractScreen):
 
         self.battlefield = pygame.transform.scale(load_image('battlefield.png'), (constants.window_width, constants.window_height))
 
-        self.font = pygame.font.Font(None, 50)
+        self.attack_font = pygame.font.Font(None, 50)
+        self.name_font = pygame.font.Font(None, 55)
 
         if self.battle_counter != 3:
             pygame.mixer.music.load('static/music/battle_music.mp3')
@@ -65,10 +66,27 @@ class BattleScreen(AbstractScreen):
         for i in range(5):
             self.screen.blit(self.pokemon_team[i + 1].icon, (15 + i * 195, 590))
 
+    def render_hp(self):
+        pygame.draw.rect(self.screen, pygame.Color('white'), (10, 280, 300, 80))
+        ally_name = self.name_font.render(self.fighting_pokemon.name, True, (0, 0, 0))
+        self.screen.blit(ally_name, (10 + (300 - ally_name.get_width()) // 2, 280))
+        pygame.draw.line(self.screen, pygame.Color('green'), (20, 330), (300, 330), 5)
+        ally_ratio = (self.fighting_pokemon.hp - self.fighting_pokemon.current_hp) / self.fighting_pokemon.hp
+        if ally_ratio != 0:
+            pygame.draw.line(self.screen, pygame.Color('red'), (300, 330), (300 - int(180 * ally_ratio), 330), 5)
+
+        pygame.draw.rect(self.screen, pygame.Color('white'), (690, 80, 300, 80))
+        enemy_name = self.name_font.render(self.enemy_fighting_pokemon.name, True, (0, 0, 0))
+        self.screen.blit(enemy_name, (690 + (300 - enemy_name.get_width()) // 2, 80))
+        pygame.draw.line(self.screen, pygame.Color('green'), (700, 130), (980, 130), 5)
+        enemy_ratio = (self.enemy_fighting_pokemon.hp - self.enemy_fighting_pokemon.current_hp) / self.enemy_fighting_pokemon.hp
+        if enemy_ratio != 0:
+            pygame.draw.line(self.screen, pygame.Color('red'), (980, 130), (980 - int(180 * enemy_ratio), 130), 5)
+
     def render_pokemon_attacks(self):
         for y in range(2):
             for x in range(2):
-                move_text = self.font.render(self.chosen_attacks[self.fighting_pokemon][x * 2 + y].name, True, (0, 0, 0))
+                move_text = self.attack_font.render(self.chosen_attacks[self.fighting_pokemon][x * 2 + y].name, True, (0, 0, 0))
                 self.screen.blit(move_text, (490 + x * 255, 460 + y * 75))
 
     def render_ally_fighting_pokemon(self):
@@ -84,7 +102,7 @@ class BattleScreen(AbstractScreen):
         frame = pygame.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2))
         self.screen.blit(frame, (620, 250))
         self.current_enemy_frame += 1
-        if self.current_enemy_frame // 3 == len(self.fighting_pokemon.back_frames):
+        if self.current_enemy_frame // 3 == len(self.enemy_fighting_pokemon.front_frames):
             self.current_enemy_frame = 1
 
 
@@ -117,6 +135,7 @@ class BattleScreen(AbstractScreen):
         self.render_pokemon_attacks()
         self.render_ally_fighting_pokemon()
         self.render_enemy_fighting_pokemon()
+        self.render_hp()
 
 
 class StageScreen(AbstractScreen):

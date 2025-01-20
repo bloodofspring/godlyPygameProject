@@ -111,7 +111,7 @@ class MoveChoosingScreen(AbstractScreen):
     def update(self, events, **kwargs) -> None:
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.choose_text, (210, 0))
-        self.screen.blit(self.tip_text, (100, 50))
+        self.screen.blit(self.tip_text, (350, 50))
 
         if len(self.chosen_attacks[self.current_pokemon]) == attacks_per_pokemon:
             if self.change_pokemon_team_position():
