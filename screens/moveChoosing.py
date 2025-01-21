@@ -1,12 +1,11 @@
 import pygame
 
-from constants import attacks_per_pokemon
+from constants import attacks_per_pokemon, window_width, window_height
 from database.models import PokemonAttack
 from entities import PokemonEntity
 from screens.abstract import AbstractScreen
 from screens.battle import StageScreen
 from util import load_image, draw_button_with_background
-from screens.credits import CreditsScreen
 
 
 class MoveChoosingScreen(AbstractScreen):
@@ -18,6 +17,9 @@ class MoveChoosingScreen(AbstractScreen):
 
         self.chosen_attacks: dict[PokemonEntity, list[PokemonAttack]] = {p: [] for p in self.pokemon_team}
         self.current_attack: PokemonAttack | None = None
+
+        background = load_image('forest_background.png')
+        self.background = pygame.transform.scale(background, (window_width, window_height))
 
         self.main_font = pygame.font.Font(None, 50)
         self.choose_text = self.main_font.render("Choose 4 moves for each pokemon", True, (0, 0, 0))
@@ -118,7 +120,7 @@ class MoveChoosingScreen(AbstractScreen):
                 self.change_cursor_position(1)
 
     def update(self, events, **kwargs) -> None:
-        self.screen.fill((255, 255, 255))
+        self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.choose_text, (210, 0))
         self.screen.blit(self.tip_text, (350, 50))
 

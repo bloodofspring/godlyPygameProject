@@ -1,6 +1,6 @@
 import pygame
 
-from constants import pokemon_names
+from constants import pokemon_names, window_width, window_height
 from entities import PokemonEntity
 from screens.abstract import AbstractScreen
 from screens.moveChoosing import MoveChoosingScreen
@@ -14,6 +14,9 @@ class TeamChoosingScreen(AbstractScreen):
         self.main_font = pygame.font.Font(None, 50)
         self.choose_text = self.main_font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
         self.tip_text = self.main_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
+
+        background = load_image('forest_background.png')
+        self.background = pygame.transform.scale(background, (window_width, window_height))
 
         self.all_pokemon: list[PokemonEntity] = [PokemonEntity(i) for i in pokemon_names]
         self.chosen_pokemons = {x: False for x in self.all_pokemon}
@@ -76,7 +79,7 @@ class TeamChoosingScreen(AbstractScreen):
                 rect_start_x -= 100
 
     def update(self, events, **kwargs) -> None:
-        self.screen.fill("white")
+        self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.choose_text, (260, 0))
         self.screen.blit(self.tip_text, (100, 50))
 
