@@ -68,7 +68,6 @@ class MoveChoosingScreen(AbstractScreen):
             else:
                 rect_color = 'gray'
 
-            # pygame.draw.rect(self.screen, rect_color, (620, 123 + i * 85, 350, 80), 3)
             draw_button_with_background(
                 350, 80, 3, (0, 0, 0), rect_color,
                 blit=True, x=620, y=123 + i * 85, screen=self.screen
@@ -84,7 +83,6 @@ class MoveChoosingScreen(AbstractScreen):
             else:
                 rect_color = 'gray'
 
-            # pygame.draw.rect(self.screen, rect_color, (45, 123 + i * 85, 550, 80), 3)
             draw_button_with_background(
                 550, 80, 3, (0, 0, 0), rect_color,
                 blit=True, x=45, y=123 + i * 85, screen=self.screen
