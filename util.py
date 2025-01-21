@@ -7,6 +7,25 @@ from constants import pokemon_names
 all_sprites = pygame.sprite.Group()
 
 
+def draw_button_with_background(
+        width: int, height: int,
+        border_width: int | None, border_color: tuple[int, int, int] | str | None,
+        background_color: tuple[int, int, int] | str, alpha: int = 128,
+        blit: bool = False, x: int | None = None, y: int | None = None, screen: pygame.Surface | None = None
+) -> pygame.Surface:
+    surface = pygame.Surface((width, height))
+    surface.set_alpha(alpha)
+    surface.fill(background_color)
+
+    if border_width is not None and border_width > 0:
+        pygame.draw.rect(surface, border_color, (0, 0, width - 1, height - 1), border_width)
+
+    if blit:
+        screen.blit(surface, (x, y)
+
+    return surface
+
+
 def load_image(name, colorkey=None, path="static/images"):
     fullname = os.path.join(path, name)
 
