@@ -22,6 +22,13 @@ class BattleScreen(AbstractScreen):
         self.current_ally_frame = 1
         self.current_enemy_frame = 1
 
+        self.attack_button = pygame.Surface((250, 70))
+        self.attack_button.set_alpha(128)
+        self.attack_button.fill((255, 255, 255))
+
+        self.reserved_pokemon_button  = pygame.Surface((190, 80))
+        self.reserved_pokemon_button.set_alpha(128)
+
         self.battlefield = pygame.transform.scale(load_image('battlefield.png'), (constants.window_width, constants.window_height))
 
         self.attack_font = pygame.font.Font(None, 50)
@@ -56,15 +63,18 @@ class BattleScreen(AbstractScreen):
     def render_buttons(self):
         for x in range(2):
             for y in range(2):
+                self.screen.blit(self.attack_button, (480 + x * 255, 440 + y * 75))
                 if x == self.cursor_position[0] and y == self.cursor_position[1]:
                     pygame.draw.rect(self.screen, pygame.Color('yellow'), (480 + x * 255, 440 + y * 75, 250, 70), 3)
-                else:
-                    pygame.draw.rect(self.screen, pygame.Color('gray'), (480 + x * 255, 440 + y * 75, 250, 70), 3)
         for x in range(5):
+            if self.pokemon_team[x + 1].current_hp > 0:
+                self.reserved_pokemon_button.fill((255, 255, 255))
+            else:
+                self.reserved_pokemon_button.fill((128, 128, 128))
+            self.screen.blit(self.reserved_pokemon_button, (15 + x * 195, 600))
             if x == self.cursor_position[0] and self.cursor_position[1] == 2:
                 pygame.draw.rect(self.screen, pygame.Color('yellow'), (15 + x * 195, 600, 190, 80), 3)
-            else:
-                pygame.draw.rect(self.screen, pygame.Color('gray'), (15 + x * 195, 600, 190, 80), 3)
+
 
     def render_reserved_pokemon(self):
         for i in range(5):
