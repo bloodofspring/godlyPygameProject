@@ -11,7 +11,7 @@ class PokemonEntity:
             self.db: Pokemon = Pokemon.get(name=name)
 
         self.name = self.db.name
-        self.hp = self.db.stats.hp
+        self.hp = self.db.stats.hp * 2
         self.attack = self.db.stats.attack
         self.defense = self.db.stats.defense
         self.special_attack = self.db.stats.special_attack
