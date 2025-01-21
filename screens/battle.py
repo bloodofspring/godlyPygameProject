@@ -1,11 +1,14 @@
+import random
+
 import pygame
-from screens import AbstractScreen
-from screens.credits import CreditsScreen
-from util import load_image, draw_button_with_background
+
 import constants
 from database.models import PokemonAttack, PokemonTypeInteraction
 from entities import PokemonEntity
-import random
+from screens import AbstractScreen
+from screens.gameOver import GameOverScreen
+from screens.credits import CreditsScreen
+from util import load_image, draw_button_with_background
 
 
 class BattleScreen(AbstractScreen):
@@ -57,7 +60,8 @@ class BattleScreen(AbstractScreen):
         for x in range(2):
             for y in range(2):
                 draw_button_with_background(
-                    250, 70, 3, (0, 0, 0), (255, 255, 0) if x == self.cursor_position[0] and y == self.cursor_position[1] else (255, 255, 255),
+                    250, 70, 3, (0, 0, 0),
+                    (255, 255, 0) if x == self.cursor_position[0] and y == self.cursor_position[1] else (255, 255, 255),
                     blit=True, x=480 + x * 255, y=440 + y * 75, screen=self.screen
                 )
         for x in range(5):
@@ -101,14 +105,16 @@ class BattleScreen(AbstractScreen):
         enemy_name = self.name_font.render(self.enemy_fighting_pokemon.name, True, (0, 0, 0))
         self.screen.blit(enemy_name, (690 + (300 - enemy_name.get_width()) // 2, 90))
         pygame.draw.line(self.screen, pygame.Color('green'), (700, 140), (980, 140), 5)
-        enemy_ratio = (self.enemy_fighting_pokemon.hp - self.enemy_fighting_pokemon.current_hp) / self.enemy_fighting_pokemon.hp
+        enemy_ratio = (
+                              self.enemy_fighting_pokemon.hp - self.enemy_fighting_pokemon.current_hp) / self.enemy_fighting_pokemon.hp
         if enemy_ratio != 0:
             pygame.draw.line(self.screen, pygame.Color('red'), (980, 140), (980 - int(280 * enemy_ratio), 140), 5)
 
     def render_pokemon_attacks(self):
         for y in range(2):
             for x in range(2):
-                move_text = self.attack_font.render(self.chosen_attacks[self.fighting_pokemon][x * 2 + y].name, True, (0, 0, 0))
+                move_text = self.attack_font.render(self.chosen_attacks[self.fighting_pokemon][x * 2 + y].name, True,
+                                                    (0, 0, 0))
                 self.screen.blit(move_text, (490 + x * 255, 460 + y * 75))
 
     def render_ally_fighting_pokemon(self):
@@ -130,7 +136,8 @@ class BattleScreen(AbstractScreen):
     def ally_turn(self):
         if self.fighting_pokemon.current_hp != 0:
             if self.cursor_position[1] != 2:
-                attack: PokemonAttack = self.chosen_attacks[self.fighting_pokemon][self.cursor_position[0] * 2 + self.cursor_position[1]]
+                attack: PokemonAttack = self.chosen_attacks[self.fighting_pokemon][
+                    self.cursor_position[0] * 2 + self.cursor_position[1]]
                 if attack.accuracy / 100 > random.random():
                     ally_damage = attack.power
                     if attack.category == 'physical':
@@ -183,16 +190,17 @@ class BattleScreen(AbstractScreen):
                     ))
                 elif self.pokemon_team[self.cursor_position[0] + 1].current_hp != 0:
                     self.current_ally_frame = 1
-                    self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[self.cursor_position[0] + 1], self.pokemon_team[0]
+                    self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[
+                        self.cursor_position[0] + 1], self.pokemon_team[0]
                     self.fighting_pokemon = self.pokemon_team[0]
             else:
                 if self.pokemon_team[self.cursor_position[0] + 1].current_hp != 0:
                     self.current_ally_frame = 1
-                    self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[self.cursor_position[0] + 1], self.pokemon_team[0]
+                    self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[
+                        self.cursor_position[0] + 1], self.pokemon_team[0]
                     self.fighting_pokemon = self.pokemon_team[0]
                     if self.fighting_pokemon.current_hp != 0:
                         self.enemy_turn()
-
 
     def enemy_turn(self):
         if self.enemy_fighting_pokemon.current_hp != 0:
@@ -255,7 +263,6 @@ class BattleScreen(AbstractScreen):
                     if event.key in (pygame.K_d, pygame.K_RIGHT):
                         self.change_cursor_position(1, 0)
 
-
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
         self.screen.fill((255, 255, 255))
@@ -309,7 +316,7 @@ class ContinueScreen(AbstractScreen):
 
     def update_counter(self):
         if self.counter_value == 0:
-            self.runner.change_screen(CreditsScreen(screen=self.screen, runner=self.runner))
+            self.runner.change_screen(GameOverScreen(screen=self.screen, runner=self.runner, pokemon_team=self.pokemon_team))
 
         if self.runner.frame % self.frequency == 0:
             self.counter_value -= 1

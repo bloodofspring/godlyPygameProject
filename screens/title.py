@@ -18,7 +18,6 @@ class TitleScreen(AbstractScreen):
         background = load_image('forest_background.png')
         self.background = pygame.transform.scale(background, (window_width, window_height))
 
-        # ToDo: Поправить порнуху (разграничить flicker_frequency и welcome_text_color_change_delta, а то делают одно и то же)
         self.welcome_text_color: tuple[int, int, int] = (0, 0, 0)
         self.flicker_frequency = 1
         self.welcome_text_color_change_delta: int = 5
