@@ -162,11 +162,12 @@ class BattleScreen(AbstractScreen):
                     self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[self.cursor_position[0] + 1], self.pokemon_team[0]
                     self.fighting_pokemon = self.pokemon_team[0]
             else:
-                self.current_ally_frame = 1
-                self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[self.cursor_position[0] + 1], self.pokemon_team[0]
-                self.fighting_pokemon = self.pokemon_team[0]
-                if self.fighting_pokemon.current_hp != 0:
-                    self.enemy_turn()
+                if self.pokemon_team[self.cursor_position[0] + 1].current_hp != 0:
+                    self.current_ally_frame = 1
+                    self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[self.cursor_position[0] + 1], self.pokemon_team[0]
+                    self.fighting_pokemon = self.pokemon_team[0]
+                    if self.fighting_pokemon.current_hp != 0:
+                        self.enemy_turn()
 
 
     def enemy_turn(self):
