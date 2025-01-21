@@ -150,6 +150,16 @@ class BattleScreen(AbstractScreen):
                         self.enemy_turn()
                 else:
                     self.enemy_turn()
+                if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.unload()
+                    self.runner.change_screen(ContinueScreen(
+                        screen=self.screen,
+                        runner=self.runner,
+                        battle_counter=self.battle_counter + 1,
+                        pokemon_team=self.pokemon_team,
+                        chosen_attacks=self.chosen_attacks
+                    ))
 
         if self.cursor_position[1] == 2:
             if self.fighting_pokemon.current_hp == 0:
