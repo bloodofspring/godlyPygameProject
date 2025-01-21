@@ -3,11 +3,12 @@ from screens.abstract import AbstractScreen
 
 
 class CreditsScreen(AbstractScreen):
-    def __init__(self, screen, runner):
+    def __init__(self, screen, runner, pokemon_team):
         super().__init__(screen=screen, runner=runner)
 
         font = pygame.font.Font(None, 80)
         self.choose_text = font.render("Thank you for playing!", True, (0, 0, 0))
+        self.pokemon_team = pokemon_team
 
         pygame.mixer.music.load('static/music/credits_music.mp3')
         pygame.mixer.music.play()

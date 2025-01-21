@@ -1,5 +1,6 @@
 import pygame
-from screens.abstract import AbstractScreen
+from screens import AbstractScreen
+from screens.credits import CreditsScreen
 from util import load_image
 import constants
 from database.models import PokemonAttack
@@ -11,6 +12,9 @@ class BattleScreen(AbstractScreen):
     def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
         super().__init__(screen=screen, runner=runner)
         self.pokemon_team: list[PokemonEntity, ...] = pokemon_team
+        for i in self.pokemon_team:
+            i.current_hp = i.hp
+
         self.chosen_attacks = chosen_attacks
         self.battle_counter = battle_counter
         self.fighting_pokemon: PokemonEntity = pokemon_team[0]
@@ -112,17 +116,19 @@ class BattleScreen(AbstractScreen):
                 if attack.accuracy / 100 > random.random():
                     ally_damage = attack.power
                     if attack.category == 'physical':
-                        ally_damage = ally_damage * self.fighting_pokemon.attack / self.enemy_fighting_pokemon.special_defense
+                        ally_damage = ally_damage * self.fighting_pokemon.attack / self.enemy_fighting_pokemon.defense
                     else:
                         ally_damage = ally_damage * self.fighting_pokemon.special_attack / self.enemy_fighting_pokemon.special_defense
                     if attack.type in [t.type.name for t in self.fighting_pokemon.types]:
                         ally_damage *= 1.5
-                    # ToDo: в этом месте нужно реализовать эффективности (спроси у меня подробнее, если не поняля  )
+                    # ToDo: в этом месте нужно реализовать эффективности (спроси у меня подробнее, если не понял, я объясню)
                     ally_damage = int(ally_damage)
                     if self.enemy_fighting_pokemon.speed > self.fighting_pokemon.speed:
                         self.enemy_turn()
                         if self.fighting_pokemon.current_hp > 0:
                             self.enemy_fighting_pokemon.take_damage(ally_damage)
+                            if self.enemy_fighting_pokemon.current_hp == 0:
+                                self.enemy_turn()
                     else:
                         self.enemy_fighting_pokemon.take_damage(ally_damage)
                         self.enemy_turn()
@@ -130,18 +136,63 @@ class BattleScreen(AbstractScreen):
                     self.enemy_turn()
 
         if self.cursor_position[1] == 2:
-            self.current_ally_frame = 1
-            self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[self.cursor_position[0] + 1], self.pokemon_team[0]
-            self.fighting_pokemon = self.pokemon_team[0]
-            if self.fighting_pokemon.current_hp != 0:
-                self.enemy_turn()
+            if self.fighting_pokemon.current_hp == 0:
+                if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.unload()
+                    self.runner.change_screen(ContinueScreen(
+                        screen=self.screen,
+                        runner=self.runner,
+                        battle_counter=self.battle_counter + 1,
+                        pokemon_team=self.pokemon_team,
+                        chosen_attacks=self.chosen_attacks
+                    ))
+                elif self.pokemon_team[self.cursor_position[0] + 1].current_hp != 0:
+                    self.current_ally_frame = 1
+                    self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[self.cursor_position[0] + 1], self.pokemon_team[0]
+                    self.fighting_pokemon = self.pokemon_team[0]
+            else:
+                self.current_ally_frame = 1
+                self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[self.cursor_position[0] + 1], self.pokemon_team[0]
+                self.fighting_pokemon = self.pokemon_team[0]
+                if self.fighting_pokemon.current_hp != 0:
+                    self.enemy_turn()
 
 
     def enemy_turn(self):
         if self.enemy_fighting_pokemon.current_hp != 0:
-            ...  # ToDo: рандомная атака
+            attack: PokemonAttack = random.choice(self.enemy_attacks[self.enemy_fighting_pokemon])
+            if attack.accuracy / 100 > random.random():
+                enemy_damage = attack.power
+                if attack.category == 'physical':
+                    enemy_damage = enemy_damage * self.enemy_fighting_pokemon.attack / self.fighting_pokemon.defense
+                else:
+                    enemy_damage = enemy_damage * self.enemy_fighting_pokemon.special_attack / self.fighting_pokemon.special_defense
+                if attack.type in [t.type.name for t in self.enemy_fighting_pokemon.types]:
+                    enemy_damage *= 1.5
+                # ToDo: в этом месте нужно реализовать эффективности (спроси у меня подробнее, если не понял, я объясню)
+                enemy_damage = int(enemy_damage)
+                self.fighting_pokemon.take_damage(enemy_damage)
         else:
-            ...  # ToDo: Замена
+            if len(self.enemy_pokemon) > 1:
+                self.enemy_pokemon = self.enemy_pokemon[1:]
+                self.enemy_fighting_pokemon = self.enemy_pokemon[0]
+                self.current_enemy_frame = 1
+            else:
+                if self.battle_counter == 3:
+                    self.runner.change_screen(CreditsScreen(
+                        screen=self.screen,
+                        runner=self.runner,
+                        pokemon_team=self.pokemon_team
+                    ))
+                else:
+                    self.runner.change_screen(StageScreen(
+                        screen=self.screen,
+                        runner=self.runner,
+                        battle_counter=self.battle_counter + 1,
+                        pokemon_team=self.pokemon_team,
+                        chosen_attacks=self.chosen_attacks
+                    ))
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -198,3 +249,46 @@ class StageScreen(AbstractScreen):
         self.handle_events(events)
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.stage_text, (260, 250))
+
+
+class ContinueScreen(AbstractScreen):
+    def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
+        super().__init__(screen=screen, runner=runner)
+        self.battle_counter = battle_counter
+        self.pokemon_team = pokemon_team
+        self.chosen_attacks = chosen_attacks
+
+        self.text_font = pygame.font.Font(None, 150)
+        self.continue_text = self.text_font.render("Continue?", True, (0, 0, 0))
+
+        self.frequency = 60
+        self.counter_value = 9
+
+    def update_counter(self):
+        if self.counter_value == 0:
+            self.runner.change_screen(CreditsScreen(screen=self.screen, runner=self.runner))
+
+        if self.runner.frame % self.frequency == 0:
+            self.counter_value -= 1
+
+        counter_text = self.text_font.render(str(self.counter_value), True, (0, 0, 0))
+        self.screen.blit(counter_text, (480, 400))
+
+    def handle_events(self, events) -> None:
+        for event in events:
+            match event.type:
+                case pygame.KEYUP:
+                    if event.key == pygame.K_RETURN:
+                        self.runner.change_screen(StageScreen(
+                            screen=self.screen,
+                            runner=self.runner,
+                            battle_counter=1,
+                            pokemon_team=self.pokemon_team,
+                            chosen_attacks=self.chosen_attacks
+                        ))
+
+    def update(self, events, **kwargs) -> None:
+        self.handle_events(events)
+        self.screen.fill((255, 255, 255))
+        self.screen.blit(self.continue_text, (250, 100))
+        self.update_counter()
