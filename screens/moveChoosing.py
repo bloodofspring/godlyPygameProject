@@ -1,12 +1,11 @@
 import pygame
 
-from constants import attacks_per_pokemon
+from constants import attacks_per_pokemon, window_width, window_height
 from database.models import PokemonAttack
 from entities import PokemonEntity
 from screens.abstract import AbstractScreen
 from screens.battle import StageScreen
-from util import load_image
-from screens.credits import CreditsScreen
+from util import load_image, draw_button_with_background
 
 
 class MoveChoosingScreen(AbstractScreen):
@@ -18,6 +17,9 @@ class MoveChoosingScreen(AbstractScreen):
 
         self.chosen_attacks: dict[PokemonEntity, list[PokemonAttack]] = {p: [] for p in self.pokemon_team}
         self.current_attack: PokemonAttack | None = None
+
+        background = load_image('forest_background.png')
+        self.background = pygame.transform.scale(background, (window_width, window_height))
 
         self.main_font = pygame.font.Font(None, 50)
         self.choose_text = self.main_font.render("Choose 4 moves for each pokemon", True, (0, 0, 0))
@@ -59,33 +61,39 @@ class MoveChoosingScreen(AbstractScreen):
 
         for i, attack in zip(range(len(attacks)), attacks):
             if i == self.pokemon_team_position:
-                rect_color = pygame.Color('yellow')
+                rect_color = 'yellow'
                 self.current_attack = attack
             elif attack in self.chosen_attacks[self.current_pokemon]:
-                rect_color = pygame.Color('green')
+                rect_color = 'green'
             else:
-                rect_color = pygame.Color('gray')
+                rect_color = 'gray'
 
-            pygame.draw.rect(self.screen, rect_color, (620, 123 + i * 85, 350, 80), 3)
+            draw_button_with_background(
+                350, 80, 3, (0, 0, 0), rect_color,
+                blit=True, x=620, y=123 + i * 85, screen=self.screen
+            )
 
             self.screen.blit(self.main_font.render(attack.name, True, (0, 0, 0)), (630, 145 + i * 85))
-            self.screen.blit(load_image(f'pokemonTypes/{attack.type.name}.PNG'), (875, 146 + i * 85))
+            self.screen.blit(load_image(f'pokemonTypes/{attack.type.name}.PNG', -1), (875, 146 + i * 85))
 
     def render_pokemons(self):
         for i, pokemon in zip(range(len(self.pokemon_team)), self.pokemon_team):
             if i == self.pokemon_team_position:
-                rect_color = pygame.Color('yellow')
+                rect_color = 'yellow'
             else:
-                rect_color = pygame.Color('gray')
+                rect_color = 'gray'
 
-            pygame.draw.rect(self.screen, rect_color, (45, 123 + i * 85, 550, 80), 3)
+            draw_button_with_background(
+                550, 80, 3, (0, 0, 0), rect_color,
+                blit=True, x=45, y=123 + i * 85, screen=self.screen
+            )
 
             self.screen.blit(self.main_font.render(pokemon.name, True, (0, 0, 0)), (205, 145 + i * 85))
-            self.screen.blit(pokemon.icon, (55, 113 + i * 85))  # ToDo: add icon resize
+            self.screen.blit(pokemon.icon, (55, 113 + i * 85)) 
 
             rect_start_x = 500
             for t in pokemon.types:
-                self.screen.blit(load_image(f'pokemonTypes/{t.type.name}.PNG'), (rect_start_x, 146 + i * 85))
+                self.screen.blit(load_image(f'pokemonTypes/{t.type.name}.PNG', -1), (rect_start_x, 146 + i * 85))
                 rect_start_x -= 100
 
     def select_attack(self):
@@ -110,7 +118,7 @@ class MoveChoosingScreen(AbstractScreen):
                 self.change_cursor_position(1)
 
     def update(self, events, **kwargs) -> None:
-        self.screen.fill((255, 255, 255))
+        self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.choose_text, (210, 0))
         self.screen.blit(self.tip_text, (350, 50))
 

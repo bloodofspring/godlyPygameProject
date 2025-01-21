@@ -1,10 +1,10 @@
 import pygame
 
-from constants import pokemon_names
+from constants import pokemon_names, window_width, window_height
 from entities import PokemonEntity
 from screens.abstract import AbstractScreen
 from screens.moveChoosing import MoveChoosingScreen
-from util import load_image
+from util import load_image, draw_button_with_background
 
 
 class TeamChoosingScreen(AbstractScreen):
@@ -14,6 +14,9 @@ class TeamChoosingScreen(AbstractScreen):
         self.main_font = pygame.font.Font(None, 50)
         self.choose_text = self.main_font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
         self.tip_text = self.main_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
+
+        background = load_image('forest_background.png')
+        self.background = pygame.transform.scale(background, (window_width, window_height))
 
         self.all_pokemon: list[PokemonEntity] = [PokemonEntity(i) for i in pokemon_names]
         self.chosen_pokemons = {x: False for x in self.all_pokemon}
@@ -56,24 +59,27 @@ class TeamChoosingScreen(AbstractScreen):
             pokemon = self.all_pokemon[(self.cursor_pos + i - 3) % len(self.all_pokemon)]
 
             if i == 3:
-                rect_color = pygame.Color('yellow')
+                rect_color = 'yellow'
             elif self.chosen_pokemons[pokemon]:
-                rect_color = pygame.Color('green')
+                rect_color = 'green'
             else:
-                rect_color = pygame.Color('grey')
+                rect_color = 'grey'
 
-            pygame.draw.rect(self.screen, rect_color, (200, 100 + i * 85, 600, 80), 3)
+            draw_button_with_background(
+                600, 80, 3, (0, 0, 0), rect_color,
+                blit=True, x=200, y=100 + i * 85, screen=self.screen
+            )
 
             self.screen.blit(self.main_font.render(pokemon.name, True, (0, 0, 0)), (350, 125 + i * 85))
             self.screen.blit(pokemon.icon, (200, 90 + i * 85))
 
             rect_start_x = 700
             for t in pokemon.types:
-                self.screen.blit(load_image(f'pokemonTypes/{t.type.name}.PNG'), (rect_start_x, 123 + i * 85))
+                self.screen.blit(load_image(f'pokemonTypes/{t.type.name}.PNG', -1), (rect_start_x, 123 + i * 85))
                 rect_start_x -= 100
 
     def update(self, events, **kwargs) -> None:
-        self.screen.fill("white")
+        self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.choose_text, (260, 0))
         self.screen.blit(self.tip_text, (100, 50))
 
