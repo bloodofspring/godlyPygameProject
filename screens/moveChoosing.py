@@ -6,6 +6,7 @@ from entities import PokemonEntity
 from screens.abstract import AbstractScreen
 from screens.battle import StageScreen
 from util import load_image
+from screens.credits import CreditsScreen
 
 
 class MoveChoosingScreen(AbstractScreen):

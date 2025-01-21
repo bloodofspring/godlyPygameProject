@@ -4,6 +4,7 @@ import random
 from screens.abstract import AbstractScreen
 from screens.teamChoosing import TeamChoosingScreen
 from util import load_image, PokeSprite, HorizontalBorder, all_sprites
+from constants import window_width, window_height
 
 
 class TitleScreen(AbstractScreen):
@@ -15,7 +16,7 @@ class TitleScreen(AbstractScreen):
         self.welcome_text_font = pygame.font.Font(None, 50)
 
         background = load_image('forest_background.png')
-        self.background = pygame.transform.scale(background, (logo.get_width() // 3 * 2, logo.get_height() // 3 * 2))
+        self.background = pygame.transform.scale(background, (window_width, window_height))
 
         # ToDo: Поправить порнуху (разграничить flicker_frequency и welcome_text_color_change_delta, а то делают одно и то же)
         self.welcome_text_color: tuple[int, int, int] = (0, 0, 0)
