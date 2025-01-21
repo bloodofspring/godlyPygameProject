@@ -186,6 +186,8 @@ class BattleScreen(AbstractScreen):
                         pokemon_team=self.pokemon_team
                     ))
                 else:
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.unload()
                     self.runner.change_screen(StageScreen(
                         screen=self.screen,
                         runner=self.runner,
