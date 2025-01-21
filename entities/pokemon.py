@@ -28,10 +28,6 @@ class PokemonEntity:
     def take_damage(self, damage: int) -> None:
         if damage > self.current_hp:
             self.current_hp = 0
-            self.faint()
             return
 
         self.current_hp -= damage
-
-    def faint(self) -> None:
-        raise NotImplementedError

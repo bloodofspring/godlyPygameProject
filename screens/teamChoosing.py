@@ -15,7 +15,7 @@ class TeamChoosingScreen(AbstractScreen):
         self.choose_text = self.main_font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
         self.tip_text = self.main_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
 
-        self.all_pokemon = [PokemonEntity(i) for i in pokemon_names]
+        self.all_pokemon: list[PokemonEntity] = [PokemonEntity(i) for i in pokemon_names]
         self.chosen_pokemons = {x: False for x in self.all_pokemon}
         self.cursor_pos = 0
 
