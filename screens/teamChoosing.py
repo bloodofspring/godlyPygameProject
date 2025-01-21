@@ -63,7 +63,7 @@ class TeamChoosingScreen(AbstractScreen):
                 rect_color = 'grey'
 
             draw_button_with_background(
-                600, 80, 3, rect_color, (64, 64, 64),
+                600, 80, 3, (0, 0, 0), rect_color,
                 blit=True, x=200, y=100 + i * 85, screen=self.screen
             )
 
@@ -72,7 +72,7 @@ class TeamChoosingScreen(AbstractScreen):
 
             rect_start_x = 700
             for t in pokemon.types:
-                self.screen.blit(load_image(f'pokemonTypes/{t.type.name}.PNG', colorkey=-1), (rect_start_x, 123 + i * 85))
+                self.screen.blit(load_image(f'pokemonTypes/{t.type.name}.PNG', -1), (rect_start_x, 123 + i * 85))
                 rect_start_x -= 100
 
     def update(self, events, **kwargs) -> None:
