@@ -8,6 +8,6 @@ class PokemonType(BaseModel):
 
 
 class PokemonTypeInteraction(BaseModel):
-    first = ForeignKeyField(PokemonType, backref="interacts_on")
+    first = ForeignKeyField(PokemonType, backref="interacts_on")  # ToDo: rename backref to interacts_to
     second = ForeignKeyField(PokemonType, backref="interacts_on")
     k = FloatField()

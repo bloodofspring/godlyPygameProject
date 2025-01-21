@@ -3,7 +3,7 @@ from screens import AbstractScreen
 from screens.credits import CreditsScreen
 from util import load_image
 import constants
-from database.models import PokemonAttack
+from database.models import PokemonAttack, PokemonTypeInteraction
 from entities import PokemonEntity
 import random
 
@@ -131,7 +131,13 @@ class BattleScreen(AbstractScreen):
                         ally_damage = ally_damage * self.fighting_pokemon.special_attack / self.enemy_fighting_pokemon.special_defense
                     if attack.type in [t.type.name for t in self.fighting_pokemon.types]:
                         ally_damage *= 1.5
-                    # ToDo: в этом месте нужно реализовать эффективности (спроси у меня подробнее, если не понял, я объясню)
+
+                    for ep_type in map(lambda x: x.type, self.enemy_fighting_pokemon.types):
+                        k = PokemonTypeInteraction.select().where(
+                            (PokemonTypeInteraction.first == attack.type) & (PokemonTypeInteraction.second == ep_type)
+                        )[0].k
+                        ally_damage *= k
+
                     ally_damage = int(ally_damage)
                     if self.enemy_fighting_pokemon.speed > self.fighting_pokemon.speed:
                         self.enemy_turn()
@@ -180,7 +186,13 @@ class BattleScreen(AbstractScreen):
                     enemy_damage = enemy_damage * self.enemy_fighting_pokemon.special_attack / self.fighting_pokemon.special_defense
                 if attack.type in [t.type.name for t in self.enemy_fighting_pokemon.types]:
                     enemy_damage *= 1.5
-                # ToDo: в этом месте нужно реализовать эффективности (спроси у меня подробнее, если не понял, я объясню)
+
+                for al_type in map(lambda x: x.type, self.fighting_pokemon.types):
+                    k = PokemonTypeInteraction.select().where(
+                        (PokemonTypeInteraction.first == attack.type) & (PokemonTypeInteraction.second == al_type)
+                    )[0].k
+                    enemy_damage *= k
+
                 enemy_damage = int(enemy_damage)
                 self.fighting_pokemon.take_damage(enemy_damage)
         else:
