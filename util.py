@@ -7,6 +7,8 @@ from constants import pokemon_names
 all_sprites = pygame.sprite.Group()
 
 
+# How to use:
+# draw_button_with_background(600, 180, 2, (100, 100, 100), "grey", blit=True, x=200, y=100, screen=self.screen)
 def draw_button_with_background(
         width: int, height: int,
         border_width: int | None, border_color: tuple[int, int, int] | str | None,
@@ -21,7 +23,7 @@ def draw_button_with_background(
         pygame.draw.rect(surface, border_color, (0, 0, width - 1, height - 1), border_width)
 
     if blit:
-        screen.blit(surface, (x, y)
+        screen.blit(surface, (x, y))
 
     return surface
 
