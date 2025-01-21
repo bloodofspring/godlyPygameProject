@@ -82,7 +82,10 @@ class BattleScreen(AbstractScreen):
             self.screen.blit(self.pokemon_team[i + 1].icon, (15 + i * 195, 590))
 
     def render_fighting_pokemon_hp(self):
-        pygame.draw.rect(self.screen, pygame.Color('white'), (10, 280, 300, 80))
+        draw_button_with_background(
+            300, 80, 3, (0, 0, 0), "gray",
+            blit=True, x=10, y=280, screen=self.screen
+        )
 
         ally_name = self.name_font.render(self.fighting_pokemon.name, True, (0, 0, 0))
         self.screen.blit(ally_name, (10 + (300 - ally_name.get_width()) // 2, 290))
@@ -91,7 +94,10 @@ class BattleScreen(AbstractScreen):
         if ally_ratio != 0:
             pygame.draw.line(self.screen, pygame.Color('red'), (300, 340), (300 - int(280 * ally_ratio), 340), 5)
 
-        pygame.draw.rect(self.screen, pygame.Color('white'), (690, 80, 300, 80))
+        draw_button_with_background(
+            300, 80, 3, (0, 0, 0), (255, 255, 255),
+            blit=True, x=690, y=80, screen=self.screen
+        )
         enemy_name = self.name_font.render(self.enemy_fighting_pokemon.name, True, (0, 0, 0))
         self.screen.blit(enemy_name, (690 + (300 - enemy_name.get_width()) // 2, 90))
         pygame.draw.line(self.screen, pygame.Color('green'), (700, 140), (980, 140), 5)
