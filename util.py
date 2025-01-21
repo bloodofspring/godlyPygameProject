@@ -20,7 +20,7 @@ def draw_button_with_background(
     surface.fill(background_color)
 
     if border_width is not None and border_width > 0:
-        pygame.draw.rect(surface, border_color, (0, 0, width - 1, height - 1), border_width)
+        pygame.draw.rect(surface, border_color, (0, 0, width, height), border_width)
 
     if blit:
         screen.blit(surface, (x, y))

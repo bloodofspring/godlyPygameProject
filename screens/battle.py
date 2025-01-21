@@ -1,7 +1,7 @@
 import pygame
 from screens import AbstractScreen
 from screens.credits import CreditsScreen
-from util import load_image
+from util import load_image, draw_button_with_background
 import constants
 from database.models import PokemonAttack, PokemonTypeInteraction
 from entities import PokemonEntity
@@ -21,13 +21,6 @@ class BattleScreen(AbstractScreen):
         self.cursor_position: list[int] = [0, 0]
         self.current_ally_frame = 1
         self.current_enemy_frame = 1
-
-        self.attack_button = pygame.Surface((250, 70))
-        self.attack_button.set_alpha(128)
-        self.attack_button.fill((255, 255, 255))
-
-        self.reserved_pokemon_button  = pygame.Surface((190, 80))
-        self.reserved_pokemon_button.set_alpha(128)
 
         self.battlefield = pygame.transform.scale(load_image('battlefield.png'), (constants.window_width, constants.window_height))
 
@@ -63,18 +56,26 @@ class BattleScreen(AbstractScreen):
     def render_buttons(self):
         for x in range(2):
             for y in range(2):
-                self.screen.blit(self.attack_button, (480 + x * 255, 440 + y * 75))
-                if x == self.cursor_position[0] and y == self.cursor_position[1]:
-                    pygame.draw.rect(self.screen, pygame.Color('yellow'), (480 + x * 255, 440 + y * 75, 250, 70), 3)
+                draw_button_with_background(
+                    250, 70, 3, (0, 0, 0), (255, 255, 0) if x == self.cursor_position[0] and y == self.cursor_position[1] else (255, 255, 255),
+                    blit=True, x=480 + x * 255, y=440 + y * 75, screen=self.screen
+                )
         for x in range(5):
             if self.pokemon_team[x + 1].current_hp > 0:
-                self.reserved_pokemon_button.fill((255, 255, 255))
+                if x == self.cursor_position[0] and self.cursor_position[1] == 2:
+                    background = (255, 255, 0)
+                else:
+                    background = (255, 255, 255)
             else:
-                self.reserved_pokemon_button.fill((128, 128, 128))
-            self.screen.blit(self.reserved_pokemon_button, (15 + x * 195, 600))
-            if x == self.cursor_position[0] and self.cursor_position[1] == 2:
-                pygame.draw.rect(self.screen, pygame.Color('yellow'), (15 + x * 195, 600, 190, 80), 3)
+                if x == self.cursor_position[0] and self.cursor_position[1] == 2:
+                    background = (128, 128, 0)
+                else:
+                    background = (128, 128, 128)
 
+            draw_button_with_background(
+                190, 80, 3, (0, 0, 0), background,
+                blit=True, x=15 + x * 195, y=600, screen=self.screen
+            )
 
     def render_reserved_pokemon(self):
         for i in range(5):
@@ -82,6 +83,7 @@ class BattleScreen(AbstractScreen):
 
     def render_fighting_pokemon_hp(self):
         pygame.draw.rect(self.screen, pygame.Color('white'), (10, 280, 300, 80))
+
         ally_name = self.name_font.render(self.fighting_pokemon.name, True, (0, 0, 0))
         self.screen.blit(ally_name, (10 + (300 - ally_name.get_width()) // 2, 290))
         pygame.draw.line(self.screen, pygame.Color('green'), (20, 340), (300, 340), 5)
