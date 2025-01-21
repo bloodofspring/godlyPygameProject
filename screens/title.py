@@ -4,6 +4,7 @@ import random
 from screens.abstract import AbstractScreen
 from screens.teamChoosing import TeamChoosingScreen
 from util import load_image, PokeSprite, HorizontalBorder, all_sprites
+from constants import window_width, window_height
 
 
 class TitleScreen(AbstractScreen):
@@ -15,7 +16,7 @@ class TitleScreen(AbstractScreen):
         self.welcome_text_font = pygame.font.Font(None, 50)
 
         background = load_image('forest_background.png')
-        self.background = pygame.transform.scale(background, (logo.get_width() // 3 * 2, logo.get_height() // 3 * 2))
+        self.background = pygame.transform.scale(background, (window_width, window_height))
 
         # ToDo: Поправить порнуху (разграничить flicker_frequency и welcome_text_color_change_delta, а то делают одно и то же)
         self.welcome_text_color: tuple[int, int, int] = (0, 0, 0)
@@ -41,7 +42,7 @@ class TitleScreen(AbstractScreen):
     def update_welcome_text(self) -> None:
         if self.runner.frame % self.flicker_frequency:
             rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_color)
-            self.screen.blit(rendered_text, (350, 450))
+            self.screen.blit(rendered_text, (350, 390))
 
             return
 
@@ -54,7 +55,7 @@ class TitleScreen(AbstractScreen):
         self.welcome_text_color = tuple(map(lambda x: (x + self.welcome_text_color_change_delta) % 256, self.welcome_text_color))
 
         rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_color)
-        self.screen.blit(rendered_text, (350, 450))
+        self.screen.blit(rendered_text, (350, 390))
 
     def random_pokemon_jumping(self):
         if (not self.jumping) and random.random() > 0.99:
@@ -70,7 +71,7 @@ class TitleScreen(AbstractScreen):
 
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.logo, (90, -100))
+        self.screen.blit(self.logo, (90, -140))
         self.random_pokemon_jumping()
         all_sprites.draw(self.screen)
         all_sprites.update()
