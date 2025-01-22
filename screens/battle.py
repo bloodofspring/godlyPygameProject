@@ -80,11 +80,87 @@ class HealthBar:
         self.render_hp_bar_sections()
 
 class ButtonsBar:
-    def __init__(self):
-        pass
+    def __init__(self, screen: pygame.Surface, pokemon_team, chosen_attacks, fighting_pokemon):
+        self.screen = screen
+
+        self.cursor_pos_x = 0
+        self.cursor_pos_y = 0
+
+        self.pokemon_team = pokemon_team
+        self.chosen_attacks = chosen_attacks
+        self.fighting_pokemon = fighting_pokemon
+        self.attack_font = pygame.font.Font("static/fonts/pixelFont.TTF", 30)
+
+    def change_cursor_position(self, x: int, y: int):
+        self.cursor_pos_x += x
+        if self.cursor_pos_y < 2:
+            self.cursor_pos_x %= 2
+        else:
+            self.cursor_pos_x %= 5
+
+        self.cursor_pos_y += y
+        if self.cursor_pos_x < 3:
+            self.cursor_pos_y %= 3
+        else:
+            self.cursor_pos_y = 2
+
+    def render_pokemon_attacks(self):
+        for y in range(2):
+            for x in range(2):
+                move_text = self.attack_font.render(
+                    self.chosen_attacks[self.fighting_pokemon][x * 2 + y].name, True, (0, 0, 0)
+                )
+                self.screen.blit(move_text, (490 + x * 255, 460 + y * 75))
+
+    def render_reserved_pokemon(self):
+        for i in range(5):
+            self.screen.blit(self.pokemon_team[i + 1].icon, (15 + i * 195, 590))
+    
+    def render(self):
+        # ToDo: redo this
+        #          [x][x] 0
+        #          [x][x] 1
+        # [x][x][x][x][x] 2
+        #  0  1  2  3  4  /
+        # To This
+        #          [x][x] 2
+        #          [x][x] 1
+        # [x][x][x][x][x] 0
+        #  4  3  2  1  0  /
+        for x in range(2):
+            for y in range(2):
+                draw_button_with_background(
+                    250, 70, 3, (0, 0, 0),
+                    (255, 255, 0) if x == self.cursor_pos_x and y == self.cursor_pos_y else (255, 255, 255),
+                    blit=True, x=480 + x * 255, y=440 + y * 75, screen=self.screen
+                )
+
+        for x in range(5):
+            if self.pokemon_team[x + 1].current_hp > 0:
+                if x == self.cursor_pos_x and self.cursor_pos_y == 2:
+                    background = (255, 255, 0)
+                else:
+                    background = (255, 255, 255)
+            else:
+                if x == self.cursor_pos_x and self.cursor_pos_y == 2:
+                    background = (128, 128, 0)
+                else:
+                    background = (128, 128, 128)
+
+            draw_button_with_background(
+                190, 80, 3, (0, 0, 0), background,
+                blit=True, x=15 + x * 195, y=600, screen=self.screen
+            )
+            self.render_reserved_pokemon()
+            self.render_pokemon_attacks()
+
+    def update(self, fighting_pokemon):
+        self.fighting_pokemon = fighting_pokemon
+        self.render()
 
 
 class BattleScreen(AbstractScreen):
+    # ToDo: Разгрузить __init__
     def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
         super().__init__(screen=screen, runner=runner)
         self.pokemon_team: list[PokemonEntity, ...] = pokemon_team
@@ -100,7 +176,6 @@ class BattleScreen(AbstractScreen):
 
         self.battlefield = pygame.transform.scale(load_image('battlefield.png'), (constants.window_width, constants.window_height))
 
-        self.attack_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
         self.name_font = pygame.font.Font("static/fonts/pixelFont.TTF", 55)
 
         if self.battle_counter != 3:
@@ -110,6 +185,9 @@ class BattleScreen(AbstractScreen):
         pygame.mixer.music.play(loops=-1)  # -1 означает, что музыка бесконечно зациклена
 
         self.generate_enemy()
+
+        # in testing
+        self.button_bar = ButtonsBar(self.screen, self.pokemon_team, self.chosen_attacks, self.fighting_pokemon)
 
         # my attrs :3
         self.allay_hp_bar = HealthBar(10, 280, self.screen, self.fighting_pokemon)
@@ -121,53 +199,6 @@ class BattleScreen(AbstractScreen):
         for i in self.enemy_pokemon:
             self.enemy_attacks[i] = random.choices(list(map(lambda x: x.attack, i.db.attacks)), k=4)
         self.enemy_fighting_pokemon: PokemonEntity = self.enemy_pokemon[0]
-
-    def change_cursor_position(self, x, y):
-        if y == 0:
-            if self.cursor_position[1] == 2:
-                self.cursor_position[0] = (self.cursor_position[0] + x) % 5
-            else:
-                self.cursor_position[0] = (self.cursor_position[0] + x) % 2
-        else:
-            if self.cursor_position[1] == 2:
-                self.cursor_position[0] = min(1, self.cursor_position[0])
-            self.cursor_position[1] = (self.cursor_position[1] + y) % 3
-
-    def render_buttons(self):
-        for x in range(2):
-            for y in range(2):
-                draw_button_with_background(
-                    250, 70, 3, (0, 0, 0),
-                    (255, 255, 0) if x == self.cursor_position[0] and y == self.cursor_position[1] else (255, 255, 255),
-                    blit=True, x=480 + x * 255, y=440 + y * 75, screen=self.screen
-                )
-        for x in range(5):
-            if self.pokemon_team[x + 1].current_hp > 0:
-                if x == self.cursor_position[0] and self.cursor_position[1] == 2:
-                    background = (255, 255, 0)
-                else:
-                    background = (255, 255, 255)
-            else:
-                if x == self.cursor_position[0] and self.cursor_position[1] == 2:
-                    background = (128, 128, 0)
-                else:
-                    background = (128, 128, 128)
-
-            draw_button_with_background(
-                190, 80, 3, (0, 0, 0), background,
-                blit=True, x=15 + x * 195, y=600, screen=self.screen
-            )
-
-    def render_reserved_pokemon(self):
-        for i in range(5):
-            self.screen.blit(self.pokemon_team[i + 1].icon, (15 + i * 195, 590))
-
-    def render_pokemon_attacks(self):
-        for y in range(2):
-            for x in range(2):
-                move_text = self.attack_font.render(self.chosen_attacks[self.fighting_pokemon][x * 2 + y].name, True,
-                                                    (0, 0, 0))
-                self.screen.blit(move_text, (490 + x * 255, 460 + y * 75))
 
     def render_ally_fighting_pokemon(self):
         frame = self.fighting_pokemon.back_frames[(self.current_ally_frame - 1) // 3]
@@ -187,9 +218,9 @@ class BattleScreen(AbstractScreen):
 
     def ally_turn(self):
         if self.fighting_pokemon.current_hp != 0:
-            if self.cursor_position[1] != 2:
+            if self.button_bar.cursor_pos_y != 2:
                 attack: PokemonAttack = self.chosen_attacks[self.fighting_pokemon][
-                    self.cursor_position[0] * 2 + self.cursor_position[1]]
+                    self.button_bar.cursor_pos_x * 2 + self.button_bar.cursor_pos_y]
                 if attack.accuracy / 100 > random.random():
                     ally_damage = attack.power
                     if attack.category == 'physical':
@@ -228,7 +259,7 @@ class BattleScreen(AbstractScreen):
                         chosen_attacks=self.chosen_attacks
                     ))
 
-        if self.cursor_position[1] == 2:
+        if self.button_bar.cursor_pos_y == 2:
             if self.fighting_pokemon.current_hp == 0:
                 if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
                     pygame.mixer.music.stop()
@@ -240,16 +271,16 @@ class BattleScreen(AbstractScreen):
                         pokemon_team=self.pokemon_team,
                         chosen_attacks=self.chosen_attacks
                     ))
-                elif self.pokemon_team[self.cursor_position[0] + 1].current_hp != 0:
+                elif self.pokemon_team[self.button_bar.cursor_pos_x + 1].current_hp != 0:
                     self.current_ally_frame = 1
-                    self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[
-                        self.cursor_position[0] + 1], self.pokemon_team[0]
+                    self.pokemon_team[0], self.pokemon_team[self.button_bar.cursor_pos_x + 1] = self.pokemon_team[
+                        self.button_bar.cursor_pos_x + 1], self.pokemon_team[0]
                     self.fighting_pokemon = self.pokemon_team[0]
             else:
-                if self.pokemon_team[self.cursor_position[0] + 1].current_hp != 0:
+                if self.pokemon_team[self.button_bar.cursor_pos_x + 1].current_hp != 0:
                     self.current_ally_frame = 1
-                    self.pokemon_team[0], self.pokemon_team[self.cursor_position[0] + 1] = self.pokemon_team[
-                        self.cursor_position[0] + 1], self.pokemon_team[0]
+                    self.pokemon_team[0], self.pokemon_team[self.button_bar.cursor_pos_x + 1] = self.pokemon_team[
+                        self.button_bar.cursor_pos_x + 1], self.pokemon_team[0]
                     self.fighting_pokemon = self.pokemon_team[0]
                     if self.fighting_pokemon.current_hp != 0:
                         self.enemy_turn()
@@ -299,34 +330,35 @@ class BattleScreen(AbstractScreen):
 
     def handle_events(self, events) -> None:
         for event in events:
-            match event.type:
-                case pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        self.ally_turn()
-                    if event.key in (pygame.K_w, pygame.K_UP):
-                        self.change_cursor_position(0, -1)
+            if event.type != pygame.KEYUP:
+                continue
 
-                    if event.key in (pygame.K_s, pygame.K_DOWN):
-                        self.change_cursor_position(0, 1)
-
-                    if event.key in (pygame.K_a, pygame.K_LEFT):
-                        self.change_cursor_position(-1, 0)
-
-                    if event.key in (pygame.K_d, pygame.K_RIGHT):
-                        self.change_cursor_position(1, 0)
+            if event.key == pygame.K_RETURN:
+                self.ally_turn()
+    
+            if event.key in (pygame.K_w, pygame.K_UP):
+                self.button_bar.change_cursor_position(0, -1)
+    
+            if event.key in (pygame.K_s, pygame.K_DOWN):
+                self.button_bar.change_cursor_position(0, 1)
+    
+            if event.key in (pygame.K_a, pygame.K_LEFT):
+                self.button_bar.change_cursor_position(-1, 0)
+    
+            if event.key in (pygame.K_d, pygame.K_RIGHT):
+                self.button_bar.change_cursor_position(1, 0)
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.battlefield, (0, 0))
 
-        self.render_buttons()
-        self.render_reserved_pokemon()
-        self.render_pokemon_attacks()
+        self.button_bar.update(fighting_pokemon=self.fighting_pokemon)
+
         self.render_ally_fighting_pokemon()
         self.render_enemy_fighting_pokemon()
 
-        # ToDo: Do it normally
+        # ToDo: Do it normally (in self.allay_turn)
         self.enemy_hp_bar.entity_to_track = self.enemy_fighting_pokemon
         self.allay_hp_bar.entity_to_track = self.fighting_pokemon
 
