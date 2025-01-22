@@ -20,7 +20,7 @@ class MoveChoosingScreen(AbstractScreen):
         background = load_image('forest_background.png')
         self.background = pygame.transform.scale(background, (window_width, window_height))
 
-        self.main_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
+        self.main_font = pygame.font.Font("static/fonts/pixelFont.TTF", 35)
         self.choose_text = self.main_font.render("Choose 4 moves for each pokemon", True, (0, 0, 0))
         self.tip_text = self.main_font.render("Choose with Space", True, (0, 0, 0))
 
@@ -87,7 +87,7 @@ class MoveChoosingScreen(AbstractScreen):
                 blit=True, x=45, y=123 + i * 85, screen=self.screen
             )
 
-            self.screen.blit(self.main_font.render(pokemon.name, True, (0, 0, 0)), (205, 145 + i * 85))
+            self.screen.blit(self.main_font.render(pokemon.name, True, (0, 0, 0)), (175, 145 + i * 85))
             self.screen.blit(pokemon.icon, (55, 113 + i * 85)) 
 
             rect_start_x = 500
