@@ -70,7 +70,7 @@ class TeamChoosingScreen(AbstractScreen):
                 blit=True, x=200, y=100 + i * 85, screen=self.screen
             )
 
-            self.screen.blit(self.main_font.render(pokemon.name, True, (0, 0, 0)), (350, 125 + i * 85))
+            self.screen.blit(self.main_font.render(pokemon.name, True, (0, 0, 0)), (330, 115 + i * 85))
             self.screen.blit(pokemon.icon, (200, 90 + i * 85))
 
             rect_start_x = 700
