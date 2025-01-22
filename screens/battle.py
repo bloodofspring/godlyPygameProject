@@ -59,7 +59,8 @@ class HealthBar:
         self.render_line(front_color=(255, 0, 0), secondary_color=(180, 0, 0), consider_hp=True)
         self.render_bar_borders()
 
-    def update(self):
+    def update(self, entity_to_track):
+        self.entity_to_track = entity_to_track
         self.full_hp = self.entity_to_track.hp
         self.hp = self.entity_to_track.current_hp
         self.render()
@@ -92,17 +93,15 @@ class ButtonsBar:
         self.attack_font = pygame.font.Font("static/fonts/pixelFont.TTF", 30)
 
     def change_cursor_position(self, x: int, y: int):
-        self.cursor_pos_x += x
-        if self.cursor_pos_y < 2:
-            self.cursor_pos_x %= 2
+        if y == 0:
+            if self.cursor_pos_y == 2:
+                self.cursor_pos_x = (self.cursor_pos_x + x) % 5
+            else:
+                self.cursor_pos_x = (self.cursor_pos_x + x) % 2
         else:
-            self.cursor_pos_x %= 5
-
-        self.cursor_pos_y += y
-        if self.cursor_pos_x < 3:
-            self.cursor_pos_y %= 3
-        else:
-            self.cursor_pos_y = 2
+            if self.cursor_pos_y == 2:
+                self.cursor_pos_x = min(1, self.cursor_pos_x)
+            self.cursor_pos_y = (self.cursor_pos_y + y) % 3
 
     def render_pokemon_attacks(self):
         for y in range(2):
@@ -160,51 +159,52 @@ class ButtonsBar:
 
 
 class BattleScreen(AbstractScreen):
-    # ToDo: Разгрузить __init__
     def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
         super().__init__(screen=screen, runner=runner)
+
+        self.chosen_attacks = chosen_attacks
         self.pokemon_team: list[PokemonEntity, ...] = pokemon_team
+        self.fighting_pokemon: PokemonEntity = pokemon_team[0]
+
         for i in self.pokemon_team:
             i.current_hp = i.hp
 
-        self.chosen_attacks = chosen_attacks
         self.battle_counter = battle_counter
-        self.fighting_pokemon: PokemonEntity = pokemon_team[0]
-        self.cursor_position: list[int] = [0, 0]
+
         self.current_ally_frame = 1
         self.current_enemy_frame = 1
 
-        self.battlefield = pygame.transform.scale(load_image('battlefield.png'), (constants.window_width, constants.window_height))
+        self.enemy_pokemon = random.choices([PokemonEntity(i) for i in constants.pokemon_names], k=6)
+        self.enemy_fighting_pokemon = self.enemy_pokemon[0]
+        self.enemy_attacks = {}
 
-        self.name_font = pygame.font.Font("static/fonts/pixelFont.TTF", 55)
+        for i in self.enemy_pokemon:
+            self.enemy_attacks[i] = random.choices(list(map(lambda x: x.attack, i.db.attacks)), k=4)
 
+        self.battlefield = pygame.transform.scale(
+            load_image('battlefield.png'),
+            (constants.window_width, constants.window_height)
+        )
+        self.setup_music()
+
+        self.button_bar = ButtonsBar(self.screen, self.pokemon_team, self.chosen_attacks, self.fighting_pokemon)
+
+        self.allay_hp_bar = HealthBar(10, 280, self.screen, self.fighting_pokemon)
+        self.enemy_hp_bar = HealthBar(670, 80, self.screen, self.enemy_fighting_pokemon)
+
+    def setup_music(self):
         if self.battle_counter != 3:
             pygame.mixer.music.load('static/music/battle_music.mp3')
         else:
             pygame.mixer.music.load('static/music/last_battle_music.mp3')
-        pygame.mixer.music.play(loops=-1)  # -1 означает, что музыка бесконечно зациклена
-
-        self.generate_enemy()
-
-        # in testing
-        self.button_bar = ButtonsBar(self.screen, self.pokemon_team, self.chosen_attacks, self.fighting_pokemon)
-
-        # my attrs :3
-        self.allay_hp_bar = HealthBar(10, 280, self.screen, self.fighting_pokemon)
-        self.enemy_hp_bar = HealthBar(670, 80, self.screen, self.enemy_fighting_pokemon)
-
-    def generate_enemy(self):
-        self.enemy_pokemon: list[PokemonEntity] = random.choices([PokemonEntity(i) for i in constants.pokemon_names], k=6)
-        self.enemy_attacks: dict[PokemonEntity, list[PokemonAttack]] = {}
-        for i in self.enemy_pokemon:
-            self.enemy_attacks[i] = random.choices(list(map(lambda x: x.attack, i.db.attacks)), k=4)
-        self.enemy_fighting_pokemon: PokemonEntity = self.enemy_pokemon[0]
+        pygame.mixer.music.play(loops=-1)
 
     def render_ally_fighting_pokemon(self):
         frame = self.fighting_pokemon.back_frames[(self.current_ally_frame - 1) // 3]
         frame = pygame.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2))
         self.screen.blit(frame, (250, 400))
         self.current_ally_frame += 1
+
         if self.current_ally_frame // 3 == len(self.fighting_pokemon.back_frames):
             self.current_ally_frame = 1
 
@@ -213,77 +213,84 @@ class BattleScreen(AbstractScreen):
         frame = pygame.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2))
         self.screen.blit(frame, (620, 240))
         self.current_enemy_frame += 1
+
         if self.current_enemy_frame // 3 == len(self.enemy_fighting_pokemon.front_frames):
             self.current_enemy_frame = 1
 
     def ally_turn(self):
-        if self.fighting_pokemon.current_hp != 0:
-            if self.button_bar.cursor_pos_y != 2:
-                attack: PokemonAttack = self.chosen_attacks[self.fighting_pokemon][
-                    self.button_bar.cursor_pos_x * 2 + self.button_bar.cursor_pos_y]
-                if attack.accuracy / 100 > random.random():
-                    ally_damage = attack.power
-                    if attack.category == 'physical':
-                        ally_damage = ally_damage * self.fighting_pokemon.attack / self.enemy_fighting_pokemon.defense
-                    else:
-                        ally_damage = ally_damage * self.fighting_pokemon.special_attack / self.enemy_fighting_pokemon.special_defense
-                    if attack.type in [t.type.name for t in self.fighting_pokemon.types]:
-                        ally_damage *= 1.5
+        if self.fighting_pokemon.current_hp != 0 and self.button_bar.cursor_pos_y != 2:
+            attack: PokemonAttack = self.chosen_attacks[self.fighting_pokemon][
+                self.button_bar.cursor_pos_x * 2 + self.button_bar.cursor_pos_y
+            ]
 
-                    for ep_type in map(lambda x: x.type, self.enemy_fighting_pokemon.types):
-                        k = PokemonTypeInteraction.select().where(
-                            (PokemonTypeInteraction.first == attack.type) & (PokemonTypeInteraction.second == ep_type)
-                        )[0].k
-                        ally_damage *= k
+            if attack.accuracy / 100 > random.random():
+                ally_damage = attack.power
 
-                    ally_damage = int(ally_damage)
-                    if self.enemy_fighting_pokemon.speed > self.fighting_pokemon.speed:
-                        self.enemy_turn()
-                        if self.fighting_pokemon.current_hp > 0:
-                            self.enemy_fighting_pokemon.take_damage(ally_damage)
-                            if self.enemy_fighting_pokemon.current_hp == 0:
-                                self.enemy_turn()
-                    else:
-                        self.enemy_fighting_pokemon.take_damage(ally_damage)
-                        self.enemy_turn()
+                if attack.category == 'physical':
+                    ally_damage = ally_damage * self.fighting_pokemon.attack / self.enemy_fighting_pokemon.defense
                 else:
-                    self.enemy_turn()
-                if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
-                    pygame.mixer.music.stop()
-                    pygame.mixer.music.unload()
-                    self.runner.change_screen(get_screen(name="ContinueScreen")(
-                        screen=self.screen,
-                        runner=self.runner,
-                        battle_counter=self.battle_counter + 1,
-                        pokemon_team=self.pokemon_team,
-                        chosen_attacks=self.chosen_attacks
-                    ))
+                    ally_damage = ally_damage * self.fighting_pokemon.special_attack / self.enemy_fighting_pokemon.special_defense
 
-        if self.button_bar.cursor_pos_y == 2:
-            if self.fighting_pokemon.current_hp == 0:
-                if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
-                    pygame.mixer.music.stop()
-                    pygame.mixer.music.unload()
-                    self.runner.change_screen(get_screen(name="ContinueScreen")(
-                        screen=self.screen,
-                        runner=self.runner,
-                        battle_counter=self.battle_counter + 1,
-                        pokemon_team=self.pokemon_team,
-                        chosen_attacks=self.chosen_attacks
-                    ))
-                elif self.pokemon_team[self.button_bar.cursor_pos_x + 1].current_hp != 0:
-                    self.current_ally_frame = 1
-                    self.pokemon_team[0], self.pokemon_team[self.button_bar.cursor_pos_x + 1] = self.pokemon_team[
-                        self.button_bar.cursor_pos_x + 1], self.pokemon_team[0]
-                    self.fighting_pokemon = self.pokemon_team[0]
+                if attack.type in [t.type.name for t in self.fighting_pokemon.types]:
+                    ally_damage *= 1.5
+
+                for ep_type in map(lambda x: x.type, self.enemy_fighting_pokemon.types):
+                    k = PokemonTypeInteraction.select().where(
+                        (PokemonTypeInteraction.first == attack.type) & (PokemonTypeInteraction.second == ep_type)
+                    )[0].k
+                    ally_damage *= k
+
+                ally_damage = int(ally_damage)
+
+                if self.enemy_fighting_pokemon.speed > self.fighting_pokemon.speed:
+                    self.enemy_turn()
+                    if self.fighting_pokemon.current_hp > 0:
+                        self.enemy_fighting_pokemon.take_damage(ally_damage)
+                        if self.enemy_fighting_pokemon.current_hp == 0:
+                            self.enemy_turn()
+                else:
+                    self.enemy_fighting_pokemon.take_damage(ally_damage)
+                    self.enemy_turn()
             else:
-                if self.pokemon_team[self.button_bar.cursor_pos_x + 1].current_hp != 0:
-                    self.current_ally_frame = 1
-                    self.pokemon_team[0], self.pokemon_team[self.button_bar.cursor_pos_x + 1] = self.pokemon_team[
-                        self.button_bar.cursor_pos_x + 1], self.pokemon_team[0]
-                    self.fighting_pokemon = self.pokemon_team[0]
-                    if self.fighting_pokemon.current_hp != 0:
-                        self.enemy_turn()
+                self.enemy_turn()
+
+            if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
+                pygame.mixer.music.stop()
+                pygame.mixer.music.unload()
+                self.runner.change_screen(get_screen(name="ContinueScreen")(
+                    screen=self.screen,
+                    runner=self.runner,
+                    battle_counter=self.battle_counter + 1,
+                    pokemon_team=self.pokemon_team,
+                    chosen_attacks=self.chosen_attacks
+                ))
+            return
+
+        if self.fighting_pokemon.current_hp == 0:
+            if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
+                pygame.mixer.music.stop()
+                pygame.mixer.music.unload()
+                self.runner.change_screen(get_screen(name="ContinueScreen")(
+                    screen=self.screen,
+                    runner=self.runner,
+                    battle_counter=self.battle_counter + 1,
+                    pokemon_team=self.pokemon_team,
+                    chosen_attacks=self.chosen_attacks
+                ))
+            elif self.pokemon_team[self.button_bar.cursor_pos_x + 1].current_hp != 0:
+                self.current_ally_frame = 1
+                self.pokemon_team[0], self.pokemon_team[self.button_bar.cursor_pos_x + 1] = self.pokemon_team[
+                    self.button_bar.cursor_pos_x + 1], self.pokemon_team[0]
+                self.fighting_pokemon = self.pokemon_team[0]
+            return
+
+        if self.pokemon_team[self.button_bar.cursor_pos_x + 1].current_hp != 0:
+            self.current_ally_frame = 1
+            self.pokemon_team[0], self.pokemon_team[self.button_bar.cursor_pos_x + 1] = self.pokemon_team[
+                self.button_bar.cursor_pos_x + 1], self.pokemon_team[0]
+            self.fighting_pokemon = self.pokemon_team[0]
+            if self.fighting_pokemon.current_hp != 0:
+                self.enemy_turn()
 
     def enemy_turn(self):
         if self.enemy_fighting_pokemon.current_hp != 0:
@@ -305,28 +312,29 @@ class BattleScreen(AbstractScreen):
 
                 enemy_damage = int(enemy_damage)
                 self.fighting_pokemon.take_damage(enemy_damage)
+            return
+
+        if len(self.enemy_pokemon) > 1:
+            self.enemy_pokemon = self.enemy_pokemon[1:]
+            self.enemy_fighting_pokemon = self.enemy_pokemon[0]
+            self.current_enemy_frame = 1
         else:
-            if len(self.enemy_pokemon) > 1:
-                self.enemy_pokemon = self.enemy_pokemon[1:]
-                self.enemy_fighting_pokemon = self.enemy_pokemon[0]
-                self.current_enemy_frame = 1
+            if self.battle_counter == 3:
+                self.runner.change_screen(CreditsScreen(
+                    screen=self.screen,
+                    runner=self.runner,
+                    pokemon_team=self.pokemon_team
+                ))
             else:
-                if self.battle_counter == 3:
-                    self.runner.change_screen(CreditsScreen(
-                        screen=self.screen,
-                        runner=self.runner,
-                        pokemon_team=self.pokemon_team
-                    ))
-                else:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.music.unload()
-                    self.runner.change_screen(get_screen(name="StageScreen")(
-                        screen=self.screen,
-                        runner=self.runner,
-                        battle_counter=self.battle_counter + 1,
-                        pokemon_team=self.pokemon_team,
-                        chosen_attacks=self.chosen_attacks
-                    ))
+                pygame.mixer.music.stop()
+                pygame.mixer.music.unload()
+                self.runner.change_screen(get_screen(name="StageScreen")(
+                    screen=self.screen,
+                    runner=self.runner,
+                    battle_counter=self.battle_counter + 1,
+                    pokemon_team=self.pokemon_team,
+                    chosen_attacks=self.chosen_attacks
+                ))
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -350,7 +358,6 @@ class BattleScreen(AbstractScreen):
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
-        self.screen.fill((255, 255, 255))
         self.screen.blit(self.battlefield, (0, 0))
 
         self.button_bar.update(fighting_pokemon=self.fighting_pokemon)
@@ -358,9 +365,5 @@ class BattleScreen(AbstractScreen):
         self.render_ally_fighting_pokemon()
         self.render_enemy_fighting_pokemon()
 
-        # ToDo: Do it normally (in self.allay_turn)
-        self.enemy_hp_bar.entity_to_track = self.enemy_fighting_pokemon
-        self.allay_hp_bar.entity_to_track = self.fighting_pokemon
-
-        self.allay_hp_bar.update()
-        self.enemy_hp_bar.update()
+        self.allay_hp_bar.update(entity_to_track=self.fighting_pokemon)
+        self.enemy_hp_bar.update(entity_to_track=self.enemy_fighting_pokemon)
