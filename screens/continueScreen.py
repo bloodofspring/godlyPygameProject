@@ -1,8 +1,9 @@
 import pygame
 
+from constants import window_width, window_height
 from screens import AbstractScreen
 from screens.gameOver import GameOverScreen
-from util import get_screen
+from util import get_screen, load_image
 
 
 class ContinueScreen(AbstractScreen):
@@ -11,6 +12,9 @@ class ContinueScreen(AbstractScreen):
         self.battle_counter = battle_counter
         self.pokemon_team = pokemon_team
         self.chosen_attacks = chosen_attacks
+
+        background = load_image('forest_background.png')
+        self.background = pygame.transform.scale(background, (window_width, window_height))
 
         self.text_font = pygame.font.Font("static/fonts/pixelFont.TTF", 80)
         self.continue_text = self.text_font.render("Press  enter  to  continue", True, (0, 0, 0))
@@ -26,7 +30,7 @@ class ContinueScreen(AbstractScreen):
             self.counter_value -= 1
 
         counter_text = self.text_font.render(str(self.counter_value), True, (0, 0, 0))
-        self.screen.blit(counter_text, (480, 400))
+        self.screen.blit(counter_text, (480, 350))
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -43,6 +47,6 @@ class ContinueScreen(AbstractScreen):
 
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
-        self.screen.fill((255, 255, 255))
-        self.screen.blit(self.continue_text, (40, 100))
+        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.continue_text, (35, 100))
         self.update_counter()
