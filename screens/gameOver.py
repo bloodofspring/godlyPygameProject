@@ -9,10 +9,10 @@ class GameOverScreen(AbstractScreen):
     def __init__(self, screen, runner, pokemon_team):
         super().__init__(screen=screen, runner=runner)
 
-        font = pygame.font.Font("static/fonts/pixelFont.TTF", 80)
+        font = pygame.font.Font("static/fonts/pixelFont.TTF", 150)
         small_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
         self.gratitude_text = font.render("Game over!", True, (0, 0, 0))
-        self.little_praise_text = small_font.render("However, your team did a good job", True, (0, 0, 0))
+        self.little_praise_text = small_font.render("However  your  team  did  a  good  job", True, (0, 0, 0))
         self.pokemon_team: list[PokemonEntity] = pokemon_team
 
         background = load_image('forest_background.png')
@@ -57,13 +57,13 @@ class GameOverScreen(AbstractScreen):
 
         self.current_alpha = (self.current_alpha + self.alpha_delta) % 256
         rendered_text.set_alpha(self.current_alpha)
-        self.screen.blit(rendered_text, (440, 210))
+        self.screen.blit(rendered_text, (400, 380))
 
     def update(self, events, **kwargs) -> None:
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.gratitude_text, (350, 100))
-        self.screen.blit(self.little_praise_text, (250, 160))
+        self.screen.blit(self.gratitude_text, (150, 100))
+        self.screen.blit(self.little_praise_text, (125, 230))
         self.update_flickering_text()
         self.beautiful_animation()
 
