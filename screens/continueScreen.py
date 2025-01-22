@@ -12,8 +12,8 @@ class ContinueScreen(AbstractScreen):
         self.pokemon_team = pokemon_team
         self.chosen_attacks = chosen_attacks
 
-        self.text_font = pygame.font.Font("static/fonts/pixelFont.TTF", 150)
-        self.continue_text = self.text_font.render("Continue?", True, (0, 0, 0))
+        self.text_font = pygame.font.Font("static/fonts/pixelFont.TTF", 80)
+        self.continue_text = self.text_font.render("Press  enter  to  continue", True, (0, 0, 0))
 
         self.frequency = 60
         self.counter_value = 9
@@ -44,5 +44,5 @@ class ContinueScreen(AbstractScreen):
     def update(self, events, **kwargs) -> None:
         self.handle_events(events)
         self.screen.fill((255, 255, 255))
-        self.screen.blit(self.continue_text, (250, 100))
+        self.screen.blit(self.continue_text, (40, 100))
         self.update_counter()
