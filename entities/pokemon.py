@@ -4,7 +4,7 @@ import os
 
 
 class PokemonEntity:
-    def __init__(self, name: str, db_id: int | None = None):
+    def __init__(self, name: str | None = None, db_id: int | None = None):
         if db_id:
             self.db: Pokemon = Pokemon.get_by_id(db_id)
         else:
@@ -31,3 +31,6 @@ class PokemonEntity:
             return
 
         self.current_hp -= damage
+
+    def __repr__(self):
+        return f"PokemonEntity(db_id={self.db.ID})"
