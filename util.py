@@ -9,8 +9,6 @@ from constants import pokemon_names
 all_sprites = pygame.sprite.Group()
 
 
-# How to use:
-# draw_button_with_background(600, 180, 2, (100, 100, 100), "grey", blit=True, x=200, y=100, screen=self.screen)
 def draw_button_with_background(
         width: int, height: int,
         border_width: int | None, border_color: tuple[int, int, int] | str | None,

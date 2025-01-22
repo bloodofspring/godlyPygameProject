@@ -18,9 +18,9 @@ class TitleScreen(AbstractScreen):
         background = load_image('forest_background.png')
         self.background = pygame.transform.scale(background, (window_width, window_height))
 
-        self.welcome_text_color: tuple[int, int, int] = (0, 0, 0)
+        self.welcome_text_alpha: int = 255
         self.flicker_frequency = 1
-        self.welcome_text_color_change_delta: int = 5
+        self.alpha_change_delta: int = 5
 
         self.jumping: bool = False
         self.jump_counter = 0
@@ -40,20 +40,20 @@ class TitleScreen(AbstractScreen):
 
     def update_welcome_text(self) -> None:
         if self.runner.frame % self.flicker_frequency:
-            rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_color)
+            rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_alpha)
             self.screen.blit(rendered_text, (350, 390))
 
             return
 
-        if any(map(lambda x: x == 255, self.welcome_text_color)):
-            self.welcome_text_color_change_delta = abs(self.welcome_text_color_change_delta) * -1
+        if self.welcome_text_alpha == 255:
+            self.alpha_change_delta = abs(self.alpha_change_delta) * -1
 
-        if any(map(lambda x: x == 0, self.welcome_text_color)):
-            self.welcome_text_color_change_delta = abs(self.welcome_text_color_change_delta)
+        if self.welcome_text_alpha == 0:
+            self.alpha_change_delta = abs(self.alpha_change_delta)
 
-        self.welcome_text_color = tuple(map(lambda x: (x + self.welcome_text_color_change_delta) % 256, self.welcome_text_color))
-
-        rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_color)
+        rendered_text = self.welcome_text_font.render("Press Enter to start", True, (0, 0, 0))
+        self.welcome_text_alpha = (self.welcome_text_alpha + self.alpha_change_delta) % 256
+        rendered_text.set_alpha(self.welcome_text_alpha)
         self.screen.blit(rendered_text, (350, 390))
 
     def random_pokemon_jumping(self):
