@@ -176,7 +176,7 @@ class BattleScreen(AbstractScreen):
         self.current_enemy_frame = 1
 
         self.enemy_pokemon = random.choices([PokemonEntity(i) for i in constants.pokemon_names], k=6)
-        self.enemy_fighting_pokemon = self.enemy_pokemon[0]
+        self.enemy_fighting_pokemon: PokemonEntity = self.enemy_pokemon[0]
         self.enemy_attacks = {}
 
         for i in self.enemy_pokemon:
@@ -316,7 +316,7 @@ class BattleScreen(AbstractScreen):
             return
 
         if len(self.enemy_pokemon) > 1:
-            self.enemy_pokemon = self.enemy_pokemon[1:]
+            self.enemy_pokemon = list(filter(lambda x: x.current_hp > 0, self.enemy_pokemon))
             self.enemy_fighting_pokemon = self.enemy_pokemon[0]
             self.current_enemy_frame = 1
         else:
