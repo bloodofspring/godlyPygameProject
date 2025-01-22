@@ -6,9 +6,8 @@ import constants
 from database.models import PokemonAttack, PokemonTypeInteraction
 from entities import PokemonEntity
 from screens import AbstractScreen
-from screens.gameOver import GameOverScreen
 from screens.credits import CreditsScreen
-from util import load_image, draw_button_with_background
+from util import load_image, draw_button_with_background, get_screen
 
 
 class BattleScreen(AbstractScreen):
@@ -168,7 +167,7 @@ class BattleScreen(AbstractScreen):
                 if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
                     pygame.mixer.music.stop()
                     pygame.mixer.music.unload()
-                    self.runner.change_screen(ContinueScreen(
+                    self.runner.change_screen(get_screen(name="ContinueScreen")(
                         screen=self.screen,
                         runner=self.runner,
                         battle_counter=self.battle_counter + 1,
@@ -181,7 +180,7 @@ class BattleScreen(AbstractScreen):
                 if all(map(lambda x: x.current_hp == 0, self.pokemon_team)):
                     pygame.mixer.music.stop()
                     pygame.mixer.music.unload()
-                    self.runner.change_screen(ContinueScreen(
+                    self.runner.change_screen(get_screen(name="ContinueScreen")(
                         screen=self.screen,
                         runner=self.runner,
                         battle_counter=self.battle_counter + 1,
@@ -237,7 +236,7 @@ class BattleScreen(AbstractScreen):
                 else:
                     pygame.mixer.music.stop()
                     pygame.mixer.music.unload()
-                    self.runner.change_screen(StageScreen(
+                    self.runner.change_screen(get_screen(name="StageScreen")(
                         screen=self.screen,
                         runner=self.runner,
                         battle_counter=self.battle_counter + 1,
@@ -274,71 +273,3 @@ class BattleScreen(AbstractScreen):
         self.render_ally_fighting_pokemon()
         self.render_enemy_fighting_pokemon()
         self.render_fighting_pokemon_hp()
-
-
-class StageScreen(AbstractScreen):
-    def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
-        super().__init__(screen=screen, runner=runner)
-
-        self.pokemon_team = pokemon_team
-        self.chosen_attacks = chosen_attacks
-        self.battle_counter = battle_counter
-        font = pygame.font.Font(None, 200)
-        self.stage_text = font.render(f"Stage {battle_counter}", True, (0, 0, 0))
-
-    def handle_events(self, events) -> None:
-        for event in events:
-            match event.type:
-                case pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        self.runner.change_screen(
-                            BattleScreen(screen=self.screen, runner=self.runner, battle_counter=self.battle_counter,
-                                         pokemon_team=self.pokemon_team, chosen_attacks=self.chosen_attacks))
-
-    def update(self, events, **kwargs) -> None:
-        self.handle_events(events)
-        self.screen.fill((255, 255, 255))
-        self.screen.blit(self.stage_text, (260, 250))
-
-
-class ContinueScreen(AbstractScreen):
-    def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
-        super().__init__(screen=screen, runner=runner)
-        self.battle_counter = battle_counter
-        self.pokemon_team = pokemon_team
-        self.chosen_attacks = chosen_attacks
-
-        self.text_font = pygame.font.Font(None, 150)
-        self.continue_text = self.text_font.render("Continue?", True, (0, 0, 0))
-
-        self.frequency = 60
-        self.counter_value = 9
-
-    def update_counter(self):
-        if self.counter_value == 0:
-            self.runner.change_screen(GameOverScreen(screen=self.screen, runner=self.runner, pokemon_team=self.pokemon_team))
-
-        if self.runner.frame % self.frequency == 0:
-            self.counter_value -= 1
-
-        counter_text = self.text_font.render(str(self.counter_value), True, (0, 0, 0))
-        self.screen.blit(counter_text, (480, 400))
-
-    def handle_events(self, events) -> None:
-        for event in events:
-            match event.type:
-                case pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        self.runner.change_screen(StageScreen(
-                            screen=self.screen,
-                            runner=self.runner,
-                            battle_counter=1,
-                            pokemon_team=self.pokemon_team,
-                            chosen_attacks=self.chosen_attacks
-                        ))
-
-    def update(self, events, **kwargs) -> None:
-        self.handle_events(events)
-        self.screen.fill((255, 255, 255))
-        self.screen.blit(self.continue_text, (250, 100))
-        self.update_counter()

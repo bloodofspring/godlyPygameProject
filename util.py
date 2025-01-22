@@ -1,6 +1,8 @@
 import pygame
 import os
 import random
+
+import screens
 from constants import pokemon_names
 
 
@@ -47,6 +49,13 @@ def load_image(name, colorkey=None, path="static/images"):
         image.set_colorkey(colorkey)
 
     return image
+
+
+def get_screen(name: str):
+    try:
+        return screens.text_to_screen[name]
+    except IndexError:
+        raise ValueError
 
 
 class HorizontalBorder(pygame.sprite.Sprite):

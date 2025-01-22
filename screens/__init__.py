@@ -4,3 +4,16 @@ from .credits import CreditsScreen
 from .moveChoosing import MoveChoosingScreen
 from .teamChoosing import TeamChoosingScreen
 from .title import TitleScreen
+from .stage import StageScreen
+from .continueScreen import ContinueScreen
+
+text_to_screen = {
+    "AbstractScreen": AbstractScreen,
+    "BattleScreen": BattleScreen,
+    "CreditsScreen": CreditsScreen,
+    "MoveChoosingScreen": MoveChoosingScreen,
+    "TeamChoosingScreen": TeamChoosingScreen,
+    "TitleScreen": TitleScreen,
+    "StageScreen": StageScreen,
+    "ContinueScreen": ContinueScreen,
+}
