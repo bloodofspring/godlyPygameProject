@@ -17,7 +17,7 @@ class StageScreen(AbstractScreen):
         self.pokemon_team = pokemon_team
         self.chosen_attacks = chosen_attacks
         self.battle_counter = battle_counter
-        font = pygame.font.Font(None, 200)
+        font = pygame.font.Font("static/fonts/pixelFont.TTF", 200)
         self.stage_text = font.render(f"Stage {battle_counter}", True, (0, 0, 0))
 
     def handle_events(self, events) -> None:

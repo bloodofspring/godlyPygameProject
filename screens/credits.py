@@ -9,7 +9,7 @@ class CreditsScreen(AbstractScreen):
     def __init__(self, screen, runner, pokemon_team):
         super().__init__(screen=screen, runner=runner)
 
-        font = pygame.font.Font(None, 80)
+        font = pygame.font.Font("static/fonts/pixelFont.TTF", 80)
         self.gratitude_text = font.render("Thank you for playing!", True, (0, 0, 0))
         self.pokemon_team: list[PokemonEntity] = pokemon_team
 
@@ -18,7 +18,7 @@ class CreditsScreen(AbstractScreen):
 
         self.animation_frames: list[int] = [1 for _ in range(len(self.pokemon_team))]
 
-        self.very_small_font = pygame.font.Font(None, 50)
+        self.very_small_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
         self.flicker_frequency = 1
         self.alpha_delta = 5
         self.current_alpha: int = 255

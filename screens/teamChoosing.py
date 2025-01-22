@@ -11,7 +11,7 @@ class TeamChoosingScreen(AbstractScreen):
     def __init__(self, screen, runner):
         super().__init__(screen=screen, runner=runner)
 
-        self.main_font = pygame.font.Font(None, 50)
+        self.main_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
         self.choose_text = self.main_font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
         self.tip_text = self.main_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
 

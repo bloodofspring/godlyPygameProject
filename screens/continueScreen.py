@@ -12,7 +12,7 @@ class ContinueScreen(AbstractScreen):
         self.pokemon_team = pokemon_team
         self.chosen_attacks = chosen_attacks
 
-        self.text_font = pygame.font.Font(None, 150)
+        self.text_font = pygame.font.Font("static/fonts/pixelFont.TTF", 150)
         self.continue_text = self.text_font.render("Continue?", True, (0, 0, 0))
 
         self.frequency = 60

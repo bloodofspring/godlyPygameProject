@@ -13,7 +13,7 @@ class TitleScreen(AbstractScreen):
 
         logo = load_image('logo.png')
         self.logo = pygame.transform.scale(logo, (logo.get_width() // 2, logo.get_height() // 2))
-        self.welcome_text_font = pygame.font.Font(None, 50)
+        self.welcome_text_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
 
         background = load_image('forest_background.png')
         self.background = pygame.transform.scale(background, (window_width, window_height))

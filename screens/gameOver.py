@@ -9,8 +9,8 @@ class GameOverScreen(AbstractScreen):
     def __init__(self, screen, runner, pokemon_team):
         super().__init__(screen=screen, runner=runner)
 
-        font = pygame.font.Font(None, 80)
-        small_font = pygame.font.Font(None, 50)
+        font = pygame.font.Font("static/fonts/pixelFont.TTF", 80)
+        small_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
         self.gratitude_text = font.render("Game over!", True, (0, 0, 0))
         self.little_praise_text = small_font.render("However, your team did a good job", True, (0, 0, 0))
         self.pokemon_team: list[PokemonEntity] = pokemon_team
@@ -20,7 +20,7 @@ class GameOverScreen(AbstractScreen):
 
         self.animation_frames: list[int] = [1 for _ in range(len(self.pokemon_team))]
 
-        self.very_small_font = pygame.font.Font(None, 30)
+        self.very_small_font = pygame.font.Font("static/fonts/pixelFont.TTF", 30)
         self.flicker_frequency = 1
         self.alpha_delta = 5
         self.current_alpha: int = 255

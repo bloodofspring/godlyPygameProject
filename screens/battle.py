@@ -1,3 +1,4 @@
+import math
 import random
 
 import pygame
@@ -11,31 +12,51 @@ from util import load_image, draw_button_with_background, get_screen
 
 
 class HealthBar:
+    BAR_LENGTH: int = 192
+
     def __init__(self, xpos: int, ypos: int, screen: pygame.Surface, entity_to_track=None):
         self.xpos = xpos
         self.ypos = ypos
         self.screen = screen
 
         self.bar = pygame.transform.scale(load_image("health-bar.png"), (250, 35))
-        self.hp_font = pygame.font.Font(None, 50)
+        self.hp_font = pygame.font.Font("static/fonts/pixelFont.TTF", 40)
 
         self.full_hp = 100  # ToDo: replace with entity hp
-        self.hp = 100  # ToDo: replace with entity hp
+        self.hp = 72  # ToDo: replace with entity hp
         self.entity_name = "Blaziken"  # ToDo: replace with entity name
 
-    def render_hp_bar_sections(self):
-        pygame.draw.rect(self.screen, (255, 0, 0), (self.xpos+49, self.ypos+54, 192, 14))
-        pygame.draw.rect(self.screen, (180, 0, 0), (self.xpos+49, self.ypos+63, 192, 5))
+    @property
+    def red_bar_length(self) -> int:
+        return math.ceil((self.BAR_LENGTH / self.full_hp) * self.hp)
 
+    def render_bar_borders(self):
         white_dots = (49, 98, 147, 196)
         for i in white_dots:
-            pygame.draw.rect(self.screen, (235, 235, 235), (self.xpos+i, self.ypos+54, 4, 4))
+            pygame.draw.rect(self.screen, (235, 235, 235), (self.xpos + i, self.ypos + 54, 4, 4))
 
         borders = (94, 143, 192)
         for i in borders:
-            pygame.draw.rect(self.screen, (0, 0, 0), (self.xpos+i, self.ypos+54, 4, 5))
-            pygame.draw.rect(self.screen, (180, 0, 0), (self.xpos+i, self.ypos+59, 4, 5))
-            pygame.draw.rect(self.screen, (0, 0, 0), (self.xpos+i, self.ypos+64, 4, 5))
+            if i <= self.red_bar_length + 48:
+                center_pixel_color = (180, 0, 0)
+            else:
+                center_pixel_color = (180, 180, 180)
+
+            pygame.draw.rect(self.screen, (0, 0, 0), (self.xpos + i, self.ypos + 54, 4, 5))
+            pygame.draw.rect(self.screen, center_pixel_color, (self.xpos + i, self.ypos + 59, 4, 5))
+            pygame.draw.rect(self.screen, (0, 0, 0), (self.xpos + i, self.ypos + 64, 4, 5))
+
+    def render_line(self, front_color: tuple[int, int, int], secondary_color: tuple[int, int, int], consider_hp: bool):
+        left = self.xpos + 49
+        right = self.red_bar_length if consider_hp else self.BAR_LENGTH
+
+        pygame.draw.rect(self.screen, front_color, (left, self.ypos + 54, right, 14))
+        pygame.draw.rect(self.screen, secondary_color, (left, self.ypos + 63, right, 5))
+
+    def render_hp_bar_sections(self):
+        self.render_line(front_color=(235, 235, 235), secondary_color=(180, 180, 180), consider_hp=False)
+        self.render_line(front_color=(255, 0, 0), secondary_color=(180, 0, 0), consider_hp=True)
+        self.render_bar_borders()
 
     def render(self):
         draw_button_with_background(
@@ -46,10 +67,10 @@ class HealthBar:
         self.screen.blit(self.bar, (self.xpos, self.ypos + 40))
 
         rendered_text = self.hp_font.render(self.entity_name, True, (0, 0, 0))
-        self.screen.blit(rendered_text, ((320 - rendered_text.get_width()) / 2, self.ypos + 10))
+        self.screen.blit(rendered_text, ((320 - rendered_text.get_width()) / 2, self.ypos + 6))
 
         rendered_text = self.hp_font.render(str(self.hp), True, (0, 0, 0))
-        self.screen.blit(rendered_text, (self.xpos + 250, self.ypos + 44))
+        self.screen.blit(rendered_text, (self.xpos + 250, self.ypos + 40))
         self.render_hp_bar_sections()
 
 class ButtonsBar:
@@ -73,8 +94,8 @@ class BattleScreen(AbstractScreen):
 
         self.battlefield = pygame.transform.scale(load_image('battlefield.png'), (constants.window_width, constants.window_height))
 
-        self.attack_font = pygame.font.Font(None, 50)
-        self.name_font = pygame.font.Font(None, 55)
+        self.attack_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
+        self.name_font = pygame.font.Font("static/fonts/pixelFont.TTF", 55)
 
         if self.battle_counter != 3:
             pygame.mixer.music.load('static/music/battle_music.mp3')
