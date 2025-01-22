@@ -9,8 +9,8 @@ class CreditsScreen(AbstractScreen):
     def __init__(self, screen, runner, pokemon_team):
         super().__init__(screen=screen, runner=runner)
 
-        font = pygame.font.Font("static/fonts/pixelFont.TTF", 80)
-        self.gratitude_text = font.render("Thank you for playing!", True, (0, 0, 0))
+        font = pygame.font.Font("static/fonts/pixelFont.TTF", 85)
+        self.gratitude_text = font.render("Thank  you  for  playing!", True, (0, 0, 0))
         self.pokemon_team: list[PokemonEntity] = pokemon_team
 
         background = load_image('forest_background.png')
@@ -45,7 +45,7 @@ class CreditsScreen(AbstractScreen):
         if self.runner.frame % self.flicker_frequency:
             return
 
-        rendered_text = self.very_small_font.render("Press any key", True, (0, 0, 0))
+        rendered_text = self.very_small_font.render("Press  any  key", True, (0, 0, 0))
 
         if self.current_alpha == 255:
             self.alpha_delta = abs(self.alpha_delta) * -1
@@ -55,12 +55,12 @@ class CreditsScreen(AbstractScreen):
 
         self.current_alpha = (self.current_alpha + self.alpha_delta) % 256
         rendered_text.set_alpha(self.current_alpha)
-        self.screen.blit(rendered_text, (390, 190))
+        self.screen.blit(rendered_text, (330, 190))
 
     def update(self, events, **kwargs) -> None:
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.gratitude_text, (200, 100))
+        self.screen.blit(self.gratitude_text, (25, 100))
         self.update_flickering_text()
         self.beautiful_animation()
 
