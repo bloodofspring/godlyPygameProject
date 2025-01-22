@@ -48,4 +48,4 @@ class StageScreen(AbstractScreen):
         self.handle_events(events)
         self.screen.fill((128, 128, 128))
         self.blit_background()
-        self.screen.blit(self.stage_text, (260, 250))
+        self.screen.blit(self.stage_text, (180, 250))
