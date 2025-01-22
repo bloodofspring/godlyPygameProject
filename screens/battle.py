@@ -10,6 +10,53 @@ from screens.credits import CreditsScreen
 from util import load_image, draw_button_with_background, get_screen
 
 
+class HealthBar:
+    def __init__(self, xpos: int, ypos: int, screen: pygame.Surface, entity_to_track=None):
+        self.xpos = xpos
+        self.ypos = ypos
+        self.screen = screen
+
+        self.bar = pygame.transform.scale(load_image("health-bar.png"), (250, 35))
+        self.hp_font = pygame.font.Font(None, 50)
+
+        self.full_hp = 100  # ToDo: replace with entity hp
+        self.hp = 100  # ToDo: replace with entity hp
+        self.entity_name = "Blaziken"  # ToDo: replace with entity name
+
+    def render_hp_bar_sections(self):
+        pygame.draw.rect(self.screen, (255, 0, 0), (self.xpos+49, self.ypos+54, 192, 14))
+        pygame.draw.rect(self.screen, (180, 0, 0), (self.xpos+49, self.ypos+63, 192, 5))
+
+        white_dots = (49, 98, 147, 196)
+        for i in white_dots:
+            pygame.draw.rect(self.screen, (235, 235, 235), (self.xpos+i, self.ypos+54, 4, 4))
+
+        borders = (94, 143, 192)
+        for i in borders:
+            pygame.draw.rect(self.screen, (0, 0, 0), (self.xpos+i, self.ypos+54, 4, 5))
+            pygame.draw.rect(self.screen, (180, 0, 0), (self.xpos+i, self.ypos+59, 4, 5))
+            pygame.draw.rect(self.screen, (0, 0, 0), (self.xpos+i, self.ypos+64, 4, 5))
+
+    def render(self):
+        draw_button_with_background(
+            320, 80, 3, (0, 0, 0), "gray",
+            blit=True, x=self.xpos, y=self.ypos, screen=self.screen
+        )
+
+        self.screen.blit(self.bar, (self.xpos, self.ypos + 40))
+
+        rendered_text = self.hp_font.render(self.entity_name, True, (0, 0, 0))
+        self.screen.blit(rendered_text, ((320 - rendered_text.get_width()) / 2, self.ypos + 10))
+
+        rendered_text = self.hp_font.render(str(self.hp), True, (0, 0, 0))
+        self.screen.blit(rendered_text, (self.xpos + 250, self.ypos + 44))
+        self.render_hp_bar_sections()
+
+class ButtonsBar:
+    def __init__(self):
+        pass
+
+
 class BattleScreen(AbstractScreen):
     def __init__(self, screen, runner, battle_counter, pokemon_team, chosen_attacks):
         super().__init__(screen=screen, runner=runner)
@@ -34,6 +81,8 @@ class BattleScreen(AbstractScreen):
         else:
             pygame.mixer.music.load('static/music/last_battle_music.mp3')
         pygame.mixer.music.play(loops=-1)  # -1 означает, что музыка бесконечно зациклена
+
+        self.TEST = HealthBar(10, 280, screen)
 
         self.generate_enemy()
 
@@ -272,4 +321,6 @@ class BattleScreen(AbstractScreen):
         self.render_pokemon_attacks()
         self.render_ally_fighting_pokemon()
         self.render_enemy_fighting_pokemon()
-        self.render_fighting_pokemon_hp()
+        # self.render_fighting_pokemon_hp()
+
+        self.TEST.render()
