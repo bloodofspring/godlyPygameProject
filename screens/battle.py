@@ -14,7 +14,7 @@ from util import load_image, draw_button_with_background, get_screen
 class HealthBar:
     BAR_LENGTH: int = 192
 
-    def __init__(self, xpos: int, ypos: int, screen: pygame.Surface, entity_to_track=None):
+    def __init__(self, xpos: int, ypos: int, screen: pygame.Surface, entity_to_track: PokemonEntity):
         self.xpos = xpos
         self.ypos = ypos
         self.screen = screen
@@ -22,9 +22,10 @@ class HealthBar:
         self.bar = pygame.transform.scale(load_image("health-bar.png"), (250, 35))
         self.hp_font = pygame.font.Font("static/fonts/pixelFont.TTF", 40)
 
-        self.full_hp = 100  # ToDo: replace with entity hp
-        self.hp = 72  # ToDo: replace with entity hp
-        self.entity_name = "Blaziken"  # ToDo: replace with entity name
+        self.entity_to_track: PokemonEntity = entity_to_track
+        self.full_hp = entity_to_track.hp
+        self.hp = entity_to_track.current_hp
+        self.entity_name = entity_to_track.name
 
     @property
     def red_bar_length(self) -> int:
@@ -58,16 +59,21 @@ class HealthBar:
         self.render_line(front_color=(255, 0, 0), secondary_color=(180, 0, 0), consider_hp=True)
         self.render_bar_borders()
 
+    def update(self):
+        self.full_hp = self.entity_to_track.hp
+        self.hp = self.entity_to_track.current_hp
+        self.render()
+
     def render(self):
-        draw_button_with_background(
+        back_width = draw_button_with_background(
             320, 80, 3, (0, 0, 0), "gray",
             blit=True, x=self.xpos, y=self.ypos, screen=self.screen
-        )
+        ).get_width()
 
         self.screen.blit(self.bar, (self.xpos, self.ypos + 40))
 
         rendered_text = self.hp_font.render(self.entity_name, True, (0, 0, 0))
-        self.screen.blit(rendered_text, ((320 - rendered_text.get_width()) / 2, self.ypos + 6))
+        self.screen.blit(rendered_text, (self.xpos + (back_width - rendered_text.get_width()) / 2, self.ypos + 6))
 
         rendered_text = self.hp_font.render(str(self.hp), True, (0, 0, 0))
         self.screen.blit(rendered_text, (self.xpos + 250, self.ypos + 40))
@@ -103,9 +109,11 @@ class BattleScreen(AbstractScreen):
             pygame.mixer.music.load('static/music/last_battle_music.mp3')
         pygame.mixer.music.play(loops=-1)  # -1 означает, что музыка бесконечно зациклена
 
-        self.TEST = HealthBar(10, 280, screen)
-
         self.generate_enemy()
+
+        # my attrs :3
+        self.allay_hp_bar = HealthBar(10, 280, self.screen, self.fighting_pokemon)
+        self.enemy_hp_bar = HealthBar(670, 80, self.screen, self.enemy_fighting_pokemon)
 
     def generate_enemy(self):
         self.enemy_pokemon: list[PokemonEntity] = random.choices([PokemonEntity(i) for i in constants.pokemon_names], k=6)
@@ -153,31 +161,6 @@ class BattleScreen(AbstractScreen):
     def render_reserved_pokemon(self):
         for i in range(5):
             self.screen.blit(self.pokemon_team[i + 1].icon, (15 + i * 195, 590))
-
-    def render_fighting_pokemon_hp(self):
-        draw_button_with_background(
-            300, 80, 3, (0, 0, 0), "gray",
-            blit=True, x=10, y=280, screen=self.screen
-        )
-
-        ally_name = self.name_font.render(self.fighting_pokemon.name, True, (0, 0, 0))
-        self.screen.blit(ally_name, (10 + (300 - ally_name.get_width()) // 2, 290))
-        pygame.draw.line(self.screen, pygame.Color('green'), (20, 340), (300, 340), 5)
-        ally_ratio = (self.fighting_pokemon.hp - self.fighting_pokemon.current_hp) / self.fighting_pokemon.hp
-        if ally_ratio != 0:
-            pygame.draw.line(self.screen, pygame.Color('red'), (300, 340), (300 - int(280 * ally_ratio), 340), 5)
-
-        draw_button_with_background(
-            300, 80, 3, (0, 0, 0), (255, 255, 255),
-            blit=True, x=690, y=80, screen=self.screen
-        )
-        enemy_name = self.name_font.render(self.enemy_fighting_pokemon.name, True, (0, 0, 0))
-        self.screen.blit(enemy_name, (690 + (300 - enemy_name.get_width()) // 2, 90))
-        pygame.draw.line(self.screen, pygame.Color('green'), (700, 140), (980, 140), 5)
-        enemy_ratio = (
-                              self.enemy_fighting_pokemon.hp - self.enemy_fighting_pokemon.current_hp) / self.enemy_fighting_pokemon.hp
-        if enemy_ratio != 0:
-            pygame.draw.line(self.screen, pygame.Color('red'), (980, 140), (980 - int(280 * enemy_ratio), 140), 5)
 
     def render_pokemon_attacks(self):
         for y in range(2):
@@ -342,6 +325,10 @@ class BattleScreen(AbstractScreen):
         self.render_pokemon_attacks()
         self.render_ally_fighting_pokemon()
         self.render_enemy_fighting_pokemon()
-        # self.render_fighting_pokemon_hp()
 
-        self.TEST.render()
+        # ToDo: Do it normally
+        self.enemy_hp_bar.entity_to_track = self.enemy_fighting_pokemon
+        self.allay_hp_bar.entity_to_track = self.fighting_pokemon
+
+        self.allay_hp_bar.update()
+        self.enemy_hp_bar.update()
