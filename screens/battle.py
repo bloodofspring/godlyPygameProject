@@ -63,6 +63,7 @@ class HealthBar:
         self.entity_to_track = entity_to_track
         self.full_hp = self.entity_to_track.hp
         self.hp = self.entity_to_track.current_hp
+        self.entity_name = self.entity_to_track.name
         self.render()
 
     def render(self):
