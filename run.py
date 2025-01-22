@@ -29,7 +29,7 @@ class GameRunner:
         self.clock = pygame.time.Clock()
 
         if debug:
-            pygame.mixer.music.set_volume(0.05)
+            pygame.mixer.music.set_volume(0)
 
     def handle_events(self, events):
         for event in events:

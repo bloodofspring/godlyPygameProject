@@ -21,8 +21,9 @@ class MoveChoosingScreen(AbstractScreen):
         self.background = pygame.transform.scale(background, (window_width, window_height))
 
         self.main_font = pygame.font.Font("static/fonts/pixelFont.TTF", 35)
-        self.choose_text = self.main_font.render("Choose 4 moves for each pokemon", True, (0, 0, 0))
-        self.tip_text = self.main_font.render("Choose with Space", True, (0, 0, 0))
+        title_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
+        self.choose_text = title_font.render("Choose  4  moves  for  each  pokemon", True, (0, 0, 0))
+        self.tip_text = title_font.render("Choose  with  Space", True, (0, 0, 0))
 
     @property
     def current_pokemon(self):
@@ -118,8 +119,8 @@ class MoveChoosingScreen(AbstractScreen):
 
     def update(self, events, **kwargs) -> None:
         self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.choose_text, (210, 0))
-        self.screen.blit(self.tip_text, (350, 50))
+        self.screen.blit(self.choose_text, (110, 0))
+        self.screen.blit(self.tip_text, (250, 50))
 
         if len(self.chosen_attacks[self.current_pokemon]) == attacks_per_pokemon:
             if self.change_pokemon_team_position():

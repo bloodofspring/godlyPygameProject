@@ -12,8 +12,9 @@ class TeamChoosingScreen(AbstractScreen):
         super().__init__(screen=screen, runner=runner)
 
         self.main_font = pygame.font.Font("static/fonts/pixelFont.TTF", 50)
-        self.choose_text = self.main_font.render("Choose 6 pokemon for battle", True, (0, 0, 0))
-        self.tip_text = self.main_font.render("Choose with Space and press Enter when ready", True, (0, 0, 0))
+        self.choose_text = self.main_font.render("Choose  6  pokemon  for  battle", True, (0, 0, 0))
+        secondary_font = pygame.font.Font("static/fonts/pixelFont.TTF", 40)
+        self.tip_text = secondary_font.render("Choose  with  Space  and  press  Enter  when  ready", True, (0, 0, 0))
 
         background = load_image('forest_background.png')
         self.background = pygame.transform.scale(background, (window_width, window_height))
@@ -80,8 +81,8 @@ class TeamChoosingScreen(AbstractScreen):
 
     def update(self, events, **kwargs) -> None:
         self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.choose_text, (260, 0))
-        self.screen.blit(self.tip_text, (100, 50))
+        self.screen.blit(self.choose_text, (165, 0))
+        self.screen.blit(self.tip_text, (80, 50))
 
         self.display_pokemon()
         self.handle_events(events)
