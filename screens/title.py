@@ -41,7 +41,7 @@ class TitleScreen(AbstractScreen):
     def update_welcome_text(self) -> None:
         if self.runner.frame % self.flicker_frequency:
             rendered_text = self.welcome_text_font.render("Press Enter to start", True, self.welcome_text_alpha)
-            self.screen.blit(rendered_text, (350, 390))
+            self.screen.blit(rendered_text, (275, 370))
 
             return
 
@@ -54,7 +54,7 @@ class TitleScreen(AbstractScreen):
         rendered_text = self.welcome_text_font.render("Press Enter to start", True, (0, 0, 0))
         self.welcome_text_alpha = (self.welcome_text_alpha + self.alpha_change_delta) % 256
         rendered_text.set_alpha(self.welcome_text_alpha)
-        self.screen.blit(rendered_text, (350, 390))
+        self.screen.blit(rendered_text, (275, 370))
 
     def random_pokemon_jumping(self):
         if (not self.jumping) and random.random() > 0.99:
