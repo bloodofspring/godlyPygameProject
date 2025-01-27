@@ -3,6 +3,7 @@ from util import load_image
 import os
 
 
+<<<<<<< HEAD
 class PokemonEntity:
     def __init__(self, name: str | None = None, db_id: int | None = None):
         if db_id:
@@ -28,9 +29,26 @@ class PokemonEntity:
     def take_damage(self, damage: int) -> None:
         if damage > self.current_hp:
             self.current_hp = 0
+=======
+class Pokemon:
+    def __init__(self, id):
+        self.id = id
+        # тестовый вариант, тут грузить из базы данных с помощью id, все стаы тут для теста
+        self.name = "Charizard"
+        self.attack = 1
+        self.current_hp = 1
+        self.defense = 1
+        self.speed = 1
+        self.icon = load_image('icon.png', path='static/images/Charizard')
+
+    def take_damage(self, damage: int) -> None:
+        if damage > self.current_hp:
+            self.hp = 0
+            self.faint()
+>>>>>>> main
             return
 
-        self.current_hp -= damage
+        self.hp -= damage
 
     def __repr__(self):
         return f"PokemonEntity(db_id={self.db.ID})"
