@@ -1,6 +1,6 @@
 from typing import Final
 
-debug: Final[bool] = False
+debug: Final[bool] = True  # ToDo: set false while release
 
 window_width: Final[int] = 1000
 window_height: Final[int] = 700
