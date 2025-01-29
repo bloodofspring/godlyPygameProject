@@ -20,8 +20,8 @@ class PokemonEntity:
         self.types = self.db.types
 
         self.icon = load_image('icon.png', path=f'static/images/{self.name}')
-        self.front_frames = [load_image(f'front{i}.png', path=f'static/images/{self.name}') for i in range(len(os.listdir(f'static/images/{self.name}')) // 2)]
-        self.back_frames = [load_image(f'back{i}.png', path=f'static/images/{self.name}') for i in range(len(os.listdir(f'static/images/{self.name}')) // 2)]
+        self.front_frames = [load_image(f'front{i}.png', path=f'static/images/{self.name}') for i in range(len(os.listdir(f'static/images/{self.name}')) // 2 - 1)]
+        self.back_frames = [load_image(f'back{i}.png', path=f'static/images/{self.name}') for i in range(len(os.listdir(f'static/images/{self.name}')) // 2 - 1)]
 
         self.current_hp = self.hp
 
