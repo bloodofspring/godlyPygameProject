@@ -1,6 +1,6 @@
 from typing import Final
 
-debug: Final[bool] = False
+debug: Final[bool] = True
 
 window_width: Final[int] = 1000
 window_height: Final[int] = 700
