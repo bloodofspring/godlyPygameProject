@@ -25,6 +25,10 @@ class PokemonEntity:
 
         self.current_hp = self.hp
 
+    def increase_dmg(self, k: int):
+        self.special_attack *= k
+        self.attack *= k
+
     def take_damage(self, damage: int) -> None:
         if damage > self.current_hp:
             self.current_hp = 0

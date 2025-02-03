@@ -176,6 +176,9 @@ class BattleScreen(AbstractScreen):
         self.current_enemy_frame = 1
 
         self.enemy_pokemon = random.choices([PokemonEntity(i) for i in constants.pokemon_names], k=6)
+        if battle_counter == 3:
+            for p in self.enemy_pokemon:
+                p.increase_dmg(k=1.5)
         self.enemy_fighting_pokemon: PokemonEntity = self.enemy_pokemon[0]
         self.enemy_attacks = {}
 
@@ -190,7 +193,7 @@ class BattleScreen(AbstractScreen):
 
         self.button_bar = ButtonsBar(self.screen, self.pokemon_team, self.chosen_attacks, self.fighting_pokemon)
 
-        self.allay_hp_bar = HealthBar(10, 280, self.screen, self.fighting_pokemon)
+        self.ally_hp_bar = HealthBar(10, 280, self.screen, self.fighting_pokemon)
         self.enemy_hp_bar = HealthBar(670, 80, self.screen, self.enemy_fighting_pokemon)
 
     def setup_music(self):
@@ -366,5 +369,5 @@ class BattleScreen(AbstractScreen):
         self.render_ally_fighting_pokemon()
         self.render_enemy_fighting_pokemon()
 
-        self.allay_hp_bar.update(entity_to_track=self.fighting_pokemon)
+        self.ally_hp_bar.update(entity_to_track=self.fighting_pokemon)
         self.enemy_hp_bar.update(entity_to_track=self.enemy_fighting_pokemon)
